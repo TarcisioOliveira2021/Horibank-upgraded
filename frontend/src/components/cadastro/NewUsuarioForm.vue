@@ -35,7 +35,7 @@ const schema = yup.object({
 </template>
 
 <style scoped>
-form, div {
+form :where(div) {
     display: flex;
     flex-direction: column;
     justify-content: center;
