@@ -1,13 +1,13 @@
-<script setup lang="ts">    
-    defineProps({
-        botaoTexto: String
-    })
+<script setup lang="ts">
+defineProps({
+  botaoTexto: String
+})
 </script>
 
 <template>
-      <div class="login-button">
-        <button class="btn">{{botaoTexto}}</button>
-      </div>
+  <div class="login-button">
+    <button class="btn">{{ botaoTexto }}</button>
+  </div>
 </template>
 
 <style scoped>
@@ -20,8 +20,8 @@
     align-items: center;
     margin: 0.5rem 1rem 2rem 1rem;
   }
-  
-  .btn>a{
+
+  .btn>a {
     text-decoration: none;
     color: white;
   }
@@ -49,6 +49,12 @@
     background: -webkit-linear-gradient(317deg, #42d392 2%, #061147);
     -webkit-text-fill-color: white;
   }
+
+  .btn:focus {
+    outline: none;
+    box-shadow: inset 0 1px 1px #42d392, 0 0 8px #42d392;
+  }
+
 }
 
 @media (max-width:1024px) {
@@ -56,7 +62,7 @@
     margin: 1rem 1rem 2rem 1rem;
   }
 
-  .btn{
+  .btn {
     width: 200px;
     height: 40px;
   }
