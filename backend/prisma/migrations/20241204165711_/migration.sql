@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Conta" ALTER COLUMN "numero" SET DATA TYPE BIGINT;

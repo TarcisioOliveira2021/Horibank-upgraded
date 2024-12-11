@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Conta{
+  id Int @id @default(autoincrement())
+  idPessoa Int
+  numero Int
+  digito Int
+  saldo Float
+  tipoConta String
+}
+
+model Pessoa{
+  id Int @id @default(autoincrement())
+  nuCPF String
+  dataNascimento DateTime
+  usuario String
+  nome_completo String
+  email String
+  numero_celular String
+}
+
+model Transferencia{
+  id Int @id @default(autoincrement())
+  idContaOrigem Int
+  idContaDestino Int
+  valor Float
+  data DateTime
+}
