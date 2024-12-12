@@ -8,7 +8,7 @@
       <h2 class="text">Cadastro</h2>
       <p class="subtext">Faça parte de uma nova transformação digital</p>
 
-      <Form style="padding-top: 30px;"></Form>
+      <Form style="padding-top: 10px; padding-bottom: 24px;"></Form>
 
     </div>
   </div>
@@ -49,7 +49,7 @@
     letter-spacing: -1.5px;
     font-family: var(--font-code);
     text-align: left;
-    margin: 0rem 2rem 0rem 2rem;
+    margin: 3rem 2rem 0rem 2rem;
     background: -webkit-linear-gradient(317deg, #42d392 2%, #061147);
     background-clip: text;
     -webkit-text-fill-color: transparent;

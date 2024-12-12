@@ -1,33 +1,62 @@
 <script setup lang="ts">
 import Button from '../commons/ButtonSingle.vue';
 import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
-import { ref, watch, watchEffect } from 'vue';
+import { ref, watch } from 'vue';
 
 import * as yup from 'yup';
 const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/login`;
-const cpf = ref('');
+
+const dataNascimento = ref('');
+
 const schema = yup.object({
-    usuario: yup.string().min(6).max(20).required('O campo usuário é obrigatório')
+    usuario: yup.string().min(6).max(20).required('O campo usuário é obrigatório'),
+    cpf: yup.string().required('O campo cpf é obrigatório'),
 }).required();
+
+const formatacaoDataNascimento = (dataNascimento: Date) => {
+    const dia = dataNascimento.getDate();
+    const mes = dataNascimento.getMonth() + 1;
+    const ano = dataNascimento.getFullYear();
+
+    return `${dia}/${mes}/${ano}`;
+}
+
+const cpf = ref('');
+watch(cpf, (valorAtual) => {
+    cpf.value = valorAtual;
+});
 
 </script>
 
 <template>
-    <VeeForm v-slot="{ submitForm }" :validation-schema="schema" as="div">
+    <VeeForm v-slot="{ submitForm }" :validation-schema="schema">
         <form @submit="submitForm" method="post" :action="LOGIN_API_URL">
 
             <div class="usuario-field">
-                <label for="usuario">Usuario</label>
+                <label for="usuario">Nome de usuário:</label>
                 <Field class="input-login" name="usuario" placeholder="Digite o nome de usuario" />
                 <ErrorMessage name="usuario"></ErrorMessage>
             </div>
 
             <div class="cpf-field">
-                <label for="cpf">CPF</label>
-                <MaskInput class="input-login" name="cpf" v-model="cpf" mask="###.###.###-##"
-                    placeholder="Digite o cpf" />
+                <label for="cpf">Número do CPF:</label>
+                <MaskInput class="input-login" name="cpf" v-model="cpf" mask="###.###.###-##" placeholder="Digite o cpf" />
                 <ErrorMessage name="cpf"></ErrorMessage>
             </div>
+
+            <div class="full-name-field">
+                <label for="full-name">Nome completo:</label>
+                <Field class="input-login" name="full-name" placeholder="Digite o nome completo" />
+                <ErrorMessage name="full-name"></ErrorMessage>
+            </div>
+
+            <div class="born-field">
+                <label for="born-field">Data de nascimento:</label>
+                <VueDatePicker v-model="dataNascimento" :format="formatacaoDataNascimento" :enable-time-picker="false" auto-apply placeholder="Informe a data" required/>
+                <ErrorMessage name="born-field"></ErrorMessage>
+            </div>
+
+
 
             <Button botaoTexto="Logar"></Button>
         </form>
@@ -35,19 +64,19 @@ const schema = yup.object({
 </template>
 
 <style scoped>
-form :where(div) {
+form :where(.usuario-field, .cpf-field, .full-name-field, .born-field) {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-span{
+span {
     align-self: center;
     color: red;
 }
 
-div{
+:where(.usuario-field, .cpf-field, .born-field, .full-name-field) {
     align-items: baseline;
 }
 
@@ -55,10 +84,11 @@ div{
 
     label {
         margin-top: 1rem;
-        width: 232px;
+        width: 200px;
     }
 
-    .input-login {
+    .input-login,
+    .dp__main {
         width: 200px;
         height: 30px;
         padding: 0px;
@@ -69,6 +99,7 @@ div{
         align-content: center;
         text-align: center;
         cursor: pointer;
+        background-color: white;
     }
 
     .input-login:focus {
