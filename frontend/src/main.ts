@@ -2,7 +2,6 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import {router} from './router'
 import App from './App.vue'
-import { MaskInput } from 'vue-3-mask'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -19,7 +18,6 @@ const vuetify = createVuetify({
     directives,
   })
 
-app.component('MaskInput', MaskInput)
 app.component('VueDatePicker', VueDatePicker)
 app.use(vuetify)
 app.use(createPinia())

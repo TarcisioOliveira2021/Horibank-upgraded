@@ -1,7 +1,6 @@
 <script setup lang="ts">
-  import Activies from './Activities.vue';
-  import Buttons from '../commons/ButtonMultiples.vue';
-  console.log(import.meta.env.VITE_API_URL);
+import CardContent from './CardContent.vue';
+import Button from '../commons/CustomButton.vue';
 </script>
 
 <template>
@@ -11,16 +10,14 @@
       <h1 class="grettings-text-h1">Bem vindo</h1>
       <h1 class="grettings-text">Ao Horibank 2.0</h1>
       <h2 class="section-activities-h2">Nossas vantagens</h2>
-      
-      <Activies>
-      </Activies>
 
-      <Buttons 
-        botao1-texto="Registrar-se" 
-        botao2-texto="Acessar Conta"
-        route-botao1="/cadastrar-pessoa"
-        route-botao2="/acessar-conta"
-      ></Buttons>
+      <CardContent />
+
+
+      <div class="start-buttons">
+        <Button botao-texto="Registrar-se" route-botao="/cadastrar-pessoa"></Button>
+        <Button botao-texto="Acessar Conta" route-botao="/acessar-conta"></Button>
+      </div>
 
     </div>
   </div>
@@ -36,6 +33,16 @@
 }
 
 @media (max-width: 1920px) {
+
+  .start-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem 1rem 2rem 1rem;
+  }
+
   .card-container {
     width: 1400px;
     height: 800px;
@@ -106,6 +113,13 @@
   .section-activities-h2 {
     color: white;
   }
+
+  .start-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 1rem 2rem 1rem;
+  }
 }
 </style>
-

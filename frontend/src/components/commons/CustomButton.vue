@@ -1,36 +1,26 @@
-<script setup lang="ts">    
+<script setup lang="ts">
+interface Props {
+  botaoTexto: string
+  routeBotao?: string
+}
 
-
-    interface Props {
-        botao1Texto: string
-        botao2Texto: string
-        routeBotao1: string
-        routeBotao2: string
-    }
-
-    defineProps<Props>()
-
+defineProps<Props>()
 </script>
 
 <template>
-    <section class="start-buttons">
-        <button class="btn"><RouterLink :to="routeBotao1">{{botao1Texto}}</RouterLink></button>
-        <button class="btn"><RouterLink :to="routeBotao2">{{botao2Texto}}</RouterLink></button>
-      </section>
+  <template v-if="routeBotao">
+    <button class="btn">
+      <RouterLink :to="routeBotao">{{ botaoTexto }}</RouterLink>
+    </button>
+  </template>
+  <template  v-else>
+    <button class="btn">{{ botaoTexto }}</button>
+  </template>
 </template>
 
 <style scoped>
 @media (max-width: 1920px) {
-  .start-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    flex-direction: column;
-    align-items: center;
-    margin: 1rem 1rem 2rem 1rem;
-  }
-  
-  .btn>a{
+  .btn>a {
     text-decoration: none;
     color: white;
   }
@@ -61,15 +51,8 @@
 }
 
 @media (max-width:1024px) {
-  .start-buttons {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 1rem 1rem 2rem 1rem;
-  }
 
-  .btn{
+  .btn {
     width: 200px;
     height: 40px;
   }

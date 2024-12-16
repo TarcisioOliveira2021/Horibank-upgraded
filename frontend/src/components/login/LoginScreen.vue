@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from '../commons/ButtonSingle.vue';
+import Button from  '../commons/CustomButton.vue';
 import Form from './LoginForm.vue';
 
 </script>
