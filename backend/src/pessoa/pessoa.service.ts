@@ -8,12 +8,12 @@ export class PessoaService {
 
     cadastrarPessoa(pessoa: PessoaDTO){
         this.convertDataNascimento(pessoa);
+        //TODO: Implementar encriptar senha
         return this.prismaService.pessoa.create({data: pessoa});
     }
 
     convertDataNascimento(pessoa: PessoaDTO){
         const dataNascimento = new Date(pessoa.dataNascimento).toISOString();
-        console.log(dataNascimento);
         pessoa.dataNascimento = dataNascimento.toString();
     }
 }

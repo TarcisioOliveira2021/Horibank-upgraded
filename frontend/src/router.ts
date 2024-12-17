@@ -6,6 +6,7 @@ import Index from './components/home/Index.vue';
 const routes = [
   { path: '/cadastrar-pessoa', component: NewUsuario},
   { path: '/acessar-conta', component: LoginScreen },
+  { path: '/conta-dashboard', component: ContaDash },
   { path: '/', component: Index }
 ];
 

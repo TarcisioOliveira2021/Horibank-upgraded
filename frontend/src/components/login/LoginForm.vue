@@ -1,35 +1,64 @@
 <script setup lang="ts">
 import Button from '../commons/CustomButton.vue';
-import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { Form as VeeForm, Field, ErrorMessage, Form } from 'vee-validate';
 import * as yup from 'yup';
-const API_KEY = `${import.meta.env.VITE_API_URL}/login`;
+
+const API_KEY = `${import.meta.env.VITE_API_URL}/login/logar`;
+const showPassword = ref(false);
+const router = useRouter();
 
 const schema = yup.object({
-    usuario: yup.string().min(6).max(20).required('O campo usuário é obrigatório'),
-    senha: yup.string().min(8).max(16).required('O campo senha é obrigatório')
+    login: yup.string().min(5).max(20).required('O campo usuário é obrigatório'),
+    senha: yup.string().min(8).max(20).required('O campo senha é obrigatório')
 }).required();
 
-function submitForm(values: any) {
-    console.log(values);
-}
 
+const togglePasswordVisibility = () => {
+    showPassword.value = !showPassword.value;
+};
+
+function onSubmit(values: any) {
+    fetch(API_KEY, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values)
+    }).then(response => {
+        if (response.ok) {
+            response.json().then(data => {
+                router.push({ path: '/conta-dashboard', query: { id: data }});
+            });
+        } else {
+            console.log('Erro ao realizar login');
+        }
+    });
+}
 </script>
 
 <template>
-    <VeeForm v-slot="{ submitForm }" :validation-schema="schema">
-        <form @submit="submitForm">
-            <Field class="usuario-field" name="usuario" placeholder="Usuário" type="text" />
-            <ErrorMessage name="usuario"></ErrorMessage>
+        <Form @submit="onSubmit" :validation-schema="schema">
+            <Field class="usuario-field" name="login" placeholder="Usuário" type="text" />
+            <ErrorMessage name="login"></ErrorMessage>
 
-            <Field class="password-field" name="senha" placeholder="Senha" type="password" />
+
+            <div class="password-input">
+                <Field class="password-field" name="senha" :type="showPassword ? 'text' : 'password'"
+                    placeholder="Número do CPF" />
+                <button type="button" class="toggle-password" @click="togglePasswordVisibility">
+                    <span v-if="showPassword">🙈</span>
+                    <span v-else>👁️</span>
+                </button>
+            </div>
             <ErrorMessage name="senha"></ErrorMessage>
 
             <div class="start-buttons">
                 <Button botaoTexto="Logar"></Button>
                 <Button botaoTexto="Voltar" route-botao="/"></Button>
             </div>
-        </form>
-    </VeeForm>
+        </Form>
 </template>
 
 <style scoped>
@@ -48,6 +77,7 @@ span {
 
 @media (max-width: 1920px) {
     :where(.usuario-field, .password-field) {
+        position: relative !important;
         width: 220px;
         height: 30px;
         padding: 0px !important;
@@ -70,6 +100,19 @@ span {
         outline: none;
         border-color: #42d392;
         box-shadow: inset 0 0 4px #42d392, 0 0 5px #42d392;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+    }
+    
+    .password-input{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
     }
 
     .start-buttons {

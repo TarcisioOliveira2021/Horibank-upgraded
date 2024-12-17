@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE "Conta" ADD CONSTRAINT "Conta_idPessoa_fkey" FOREIGN KEY ("idPessoa") REFERENCES "Pessoa"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

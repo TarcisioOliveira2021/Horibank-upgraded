@@ -6,7 +6,7 @@ import { UsuarioDTO } from './usuario_dto';
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
-  @Post('login')
+  @Post('logar')
   login(@Body() usuario: UsuarioDTO) {
     return this.loginService.login(usuario);
   }

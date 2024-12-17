@@ -7,15 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Conta{
-  id Int @id @default(autoincrement())
-  idPessoa Int
-  numero Int
-  digito Int
-  saldo Float
-  tipoConta String
-}
-
 model Pessoa{
   id Int @id @default(autoincrement())
   nuCPF String
@@ -24,11 +15,26 @@ model Pessoa{
   nome_completo String
   email String
   numero_celular String
+  contas Conta[]
+}
+
+model Conta{
+  id Int @id @default(autoincrement())
+  pessoa Pessoa @relation(fields: [idPessoa], references: [id])
+  idPessoa Int 
+  numero Int
+  digito Int
+  saldo Float
+  tipoConta String
+  transferenciasOrigem Transferencia[] @relation("ContaOrigem")
+  transferenciasDestino Transferencia[] @relation("ContaDestino")
 }
 
 model Transferencia{
   id Int @id @default(autoincrement())
+  contaOrigem Conta @relation("ContaOrigem", fields: [idContaOrigem], references: [id])
   idContaOrigem Int
+  contaDestino Conta @relation("ContaDestino", fields: [idContaDestino], references: [id])
   idContaDestino Int
   valor Float
   data DateTime
