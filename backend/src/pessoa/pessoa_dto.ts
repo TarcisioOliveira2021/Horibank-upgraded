@@ -5,4 +5,5 @@ export class PessoaDTO {
     dataNascimento: string;
     email: string;
     numero_celular: string;
+    senha :string;
 }

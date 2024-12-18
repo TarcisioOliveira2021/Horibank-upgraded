@@ -14,6 +14,7 @@ model Pessoa{
   usuario String
   nome_completo String
   email String
+  senha String
   numero_celular String
   contas Conta[]
 }
