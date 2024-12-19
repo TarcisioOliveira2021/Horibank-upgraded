@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from '../commons/CustomButton.vue';
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { Form as VeeForm, Field, ErrorMessage, Form } from 'vee-validate';
 import * as yup from 'yup';
 
@@ -10,10 +10,9 @@ const showPassword = ref(false);
 const router = useRouter();
 
 const schema = yup.object({
-    login: yup.string().min(5).max(20).required('O campo usuário é obrigatório'),
-    senha: yup.string().min(8).max(20).required('O campo senha é obrigatório')
+    login: yup.string().min(5).max(20).required('Field login is required'),
+    password: yup.string().min(8).max(20).required('Field password is required')
 }).required();
-
 
 const togglePasswordVisibility = () => {
     showPassword.value = !showPassword.value;
@@ -28,11 +27,16 @@ function onSubmit(values: any) {
         body: JSON.stringify(values)
     }).then(response => {
         if (response.ok) {
-            response.json().then(data => {
-                router.push({ path: '/conta-dashboard', query: { id: data }});
+            response.json().then(resp => {
+                router.push({ path: '/conta-dashboard', query: { id: resp.id, token: resp.token } });
             });
         } else {
-            console.log('Erro ao realizar login');
+            if(response.status === 401){
+                alert('Usuário ou senha inválidos.');
+            } else {
+                alert('Aconteceu um erro inesperado 😢👌');
+                console.log("Codigo:", response.status, 'Erro lançado:', response.statusText, );
+            }
         }
     });
 }
@@ -40,13 +44,13 @@ function onSubmit(values: any) {
 
 <template>
         <Form @submit="onSubmit" :validation-schema="schema">
-            <Field class="usuario-field" name="login" placeholder="Usuário" type="text" />
+            <Field class="usuario-field" name="login" placeholder="login" type="text" />
             <ErrorMessage name="login"></ErrorMessage>
 
 
             <div class="password-input">
-                <Field class="password-field" name="senha" :type="showPassword ? 'text' : 'password'"
-                    placeholder="Número do CPF" />
+                <Field class="password-field" name="password" :type="showPassword ? 'text' : 'password'"
+                    placeholder="password" />
                 <button type="button" class="toggle-password" @click="togglePasswordVisibility">
                     <span v-if="showPassword">🙈</span>
                     <span v-else>👁️</span>

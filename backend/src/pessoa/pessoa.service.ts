@@ -1,30 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PessoaDTO } from './pessoa_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
+import * as bcrypt from 'bcrypt';
+import { parse } from 'path';
 
 @Injectable()
 export class PessoaService {
-    private iv: Buffer;
-    public key: Buffer;
-
     constructor(
         private prismaService: PrismaService
     ) {
-        this.initializeCrypto();
-    }
-
-    private async initializeCrypto() {
-        this.iv = randomBytes(16);
-        this.key = (await promisify(scrypt)('senha', 'salt', 32)) as Buffer;
     }
 
     async cadastrarPessoa(pessoa: PessoaDTO){
         this.convertDataNascimento(pessoa);
-        pessoa.senha = await this.encriptarSenha(pessoa.senha);
+        const user = await this.verificarUsuarioExistente(pessoa.usuario);
 
-        return this.prismaService.pessoa.create({data: pessoa});
+        if(user != null){
+            throw new BadRequestException('Usuário já cadastrado');
+        }
+
+        const senhaHas = await this.hashearSenha(pessoa.senha);
+
+        return this.prismaService.pessoa.create(
+            {      
+                data: {
+                    nuCPF: pessoa.nuCPF,
+                    dataNascimento: pessoa.dataNascimento,
+                    nome_completo: pessoa.nome_completo,
+                    usuario: pessoa.usuario,
+                    senha: senhaHas,
+                    email: pessoa.email,
+                    numero_celular: pessoa.numero_celular
+                }          
+            });
     }
 
     private convertDataNascimento(pessoa: PessoaDTO){
@@ -32,13 +40,24 @@ export class PessoaService {
         pessoa.dataNascimento = dataNascimento.toString();
     }
 
-    async encriptarSenha(senha: string): Promise<string>{
-        const cipher = createCipheriv('aes-256-ctr', this.key, this.iv);
-        return Buffer.concat([cipher.update(senha, 'utf-8'), cipher.final()]).toString('utf-8');
+    async hashearSenha(senha: string): Promise<string>{
+        const salt = await bcrypt.genSalt();
+        return await bcrypt.hash(senha, salt);
     }
 
-    async desencriptarSenha(senha: Buffer<ArrayBuffer>): Promise<string>{
-        const decipher = createDecipheriv('aes-256-ctr', this.key, this.iv);
-        return Buffer.concat([decipher.update(senha), decipher.final()]).toString('utf-8');
+    public verificarUsuarioExistente(usuario: string){
+        return this.prismaService.pessoa.findFirst({
+            where: {
+                usuario: usuario
+            }
+        });
+    }
+
+    public getPessoaId(pessoaId: string){
+        return this.prismaService.pessoa.findUnique({
+            where: {
+                id: parseInt(pessoaId)
+            }
+        });
     }
 }

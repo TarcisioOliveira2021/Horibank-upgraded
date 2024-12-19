@@ -3,6 +3,8 @@ import { UsuarioDTO } from './usuario_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { PessoaService } from 'src/pessoa/pessoa.service';
+import { Pessoa } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class LoginService {
@@ -13,27 +15,22 @@ export class LoginService {
     ) {}
 
     async login(usuario: UsuarioDTO) {
-        const userFounded = await this.validateUser(usuario);
+        const userFounded = await this.validarUsuarioSenha(usuario);
+        const token = await this.jwtService.signAsync({ id: userFounded.id });
 
-        // if(userFounded != null){
-        //     return userFounded.id;
-        // }else{
-        //     throw new UnauthorizedException();
-        // }
+        return {
+            id: userFounded.id,
+            token: token
+        };
     }
+ 
+    private async validarUsuarioSenha(usuario: UsuarioDTO) {
+        const usuarioFounded = await this.pessoaService.verificarUsuarioExistente(usuario.login);
 
-    
-    private async validateUser(usuario: UsuarioDTO) {
-        
-        const user = await this.service.pessoa.findFirst({
-            where: {
-                usuario: usuario.login,
-            }
-        });
+        if(await bcrypt.compare(usuario.password, usuarioFounded.senha)){
+            return  usuarioFounded;
+        }
 
-        
-        
-
-        
+        throw new UnauthorizedException();
     }
 }
