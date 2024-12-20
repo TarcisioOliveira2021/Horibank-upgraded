@@ -3,7 +3,6 @@ import { UsuarioDTO } from './usuario_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { PessoaService } from 'src/pessoa/pessoa.service';
-import { Pessoa } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

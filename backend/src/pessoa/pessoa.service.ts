@@ -57,6 +57,9 @@ export class PessoaService {
         const pessoa = await this.prismaService.pessoa.findUnique({
             where: {
                 id: parseInt(pessoaId)
+            },
+            include: {
+                contas: true
             }
         });
 
@@ -66,7 +69,8 @@ export class PessoaService {
             nuCPF: pessoa.nuCPF,
             dataNascimento: pessoa.dataNascimento,
             email: pessoa.email,
-            numero_celular: pessoa.numero_celular
+            numero_celular: pessoa.numero_celular,
+            contas: pessoa.contas
         }
     }
 }

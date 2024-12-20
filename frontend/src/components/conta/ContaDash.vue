@@ -1,13 +1,59 @@
+<script setup lang="ts">
+import { onBeforeMount, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import Button from '../commons/CustomButton.vue';
+
+const route = useRoute();
+const API_KEY = `${import.meta.env.VITE_API_URL}/pessoa/${route.query.id}`;
+const pessoaName = ref('');
+
+function getUsuario() {
+  fetch(API_KEY, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${route.query.token}`,
+    },
+  }).then(response => {
+    if (response.ok) {
+      response.json().then(resp => {
+        pessoaName.value = resp.nome_completo;
+      });
+    } else {
+      alert('Aconteceu um erro inesperado 😢👌');
+      console.log("Codigo:", response.status, 'Erro lançado:', response.statusText,);
+    }
+  });
+}
+
+onMounted(() => {
+  getUsuario();
+
+});
+
+onBeforeMount(() => {
+  if(route.query.token === undefined || route.query.id === undefined){
+    alert('Você não está logado 😢👌');
+    window.location.href = '/';
+  }
+});
+
+</script>
+
 <template>
   <div class="inicio">
     <div class="card-container">
 
       <div class="top-container">
-        <img src="https://picsum.photos/200/300?grayscale" alt="">
-        <div class="top-container-text">
-          <h1 class="grettings-text-h1">Bem vindo</h1>
-          <h1 class="grettings-text">{{ pessoaName }}</h1>
+        <div class="top-container-content">
+          <img src="https://picsum.photos/200/200?grayscale" alt="">
+          <div class="top-container-text">
+            <h1 class="grettings-text-h1">Bem vindo</h1>
+            <h1 class="grettings-text">{{ pessoaName }}</h1>            
+          </div>
         </div>
+
+        <Button botao-texto="Logout" route-botao="/"></Button>
       </div>
 
     </div>
@@ -24,16 +70,32 @@
 }
 
 @media (max-width: 1920px) {
+  Button{
+    margin-bottom: 1rem !important;
+  }
+
+  Button:hover{
+    transform: scale(1.1) !important;
+  }
+
   .top-container {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    margin-left: 2rem;
+    margin-right: 2rem;
   }
 
-  .top-container > img{
+  .top-container-content > img{
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    margin: 1rem 0rem 1rem 1rem;
+    margin: 2rem 0rem 1rem 1rem;
+  }
+
+  .top-container-content{
+    display: flex;
+    flex-direction: row;
   }
 
   .top-container-text{
@@ -113,36 +175,3 @@
 }
 </style>
 
-<script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-const API_KEY = `${import.meta.env.VITE_API_URL}/pessoa/${route.query.id}`;
-const pessoaName = ref('');
-
-function getUsuario() {
-  fetch(API_KEY, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${route.query.token}`,
-    },
-  }).then(response => {
-    if (response.ok) {
-      response.json().then(resp => {
-        pessoaName.value = resp.nome_completo;
-      });
-    } else {
-      alert('Aconteceu um erro inesperado 😢👌');
-      console.log("Codigo:", response.status, 'Erro lançado:', response.statusText,);
-    }
-  });
-}
-
-onMounted(() => {
-  getUsuario();
-
-});
-
-</script>
