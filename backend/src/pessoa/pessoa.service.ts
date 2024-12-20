@@ -53,11 +53,20 @@ export class PessoaService {
         });
     }
 
-    public getPessoaId(pessoaId: string){
-        return this.prismaService.pessoa.findUnique({
+    public async getPessoaId(pessoaId: string){ 
+        const pessoa = await this.prismaService.pessoa.findUnique({
             where: {
                 id: parseInt(pessoaId)
             }
         });
+
+        return {
+            id: pessoa.id,
+            nome_completo: pessoa.nome_completo,
+            nuCPF: pessoa.nuCPF,
+            dataNascimento: pessoa.dataNascimento,
+            email: pessoa.email,
+            numero_celular: pessoa.numero_celular
+        }
     }
 }

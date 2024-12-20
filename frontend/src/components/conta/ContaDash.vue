@@ -1,34 +1,18 @@
-<script setup lang="ts">
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-const API_KEY = `${import.meta.env.VITE_API_URL}/pessoa/${route.query.id}`;
-
-fetch(API_KEY, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${route.query.token}`,
-    },
-}).then(response => {
-    if (response.ok) {
-        response.json().then(resp => {
-            console.log("RESPONSE:", resp);
-        });
-    } else {
-        alert('Aconteceu um erro inesperado 😢👌');
-        console.log("Codigo:", response.status, 'Erro lançado:', response.statusText,);
-    }
-});
-</script>
-
 <template>
-    <div class="inicio">
-        <div class="card-container">
-        </div>
-    </div>
-</template>
+  <div class="inicio">
+    <div class="card-container">
 
+      <div class="top-container">
+        <img src="https://picsum.photos/200/300?grayscale" alt="">
+        <div class="top-container-text">
+          <h1 class="grettings-text-h1">Bem vindo</h1>
+          <h1 class="grettings-text">{{ pessoaName }}</h1>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .inicio {
@@ -40,6 +24,23 @@ fetch(API_KEY, {
 }
 
 @media (max-width: 1920px) {
+  .top-container {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .top-container > img{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 1rem 0rem 1rem 1rem;
+  }
+
+  .top-container-text{
+    display: flex;
+    flex-direction: column;
+  }
+
   .card-container {
     width: 1400px;
     height: 800px;
@@ -61,7 +62,7 @@ fetch(API_KEY, {
     letter-spacing: -1.5px;
     font-family: var(--font-code);
     text-align: left;
-    margin: 2rem 2rem 0rem 2rem;
+    margin: 2rem 0rem 0rem 1rem;
   }
 
   .grettings-text {
@@ -71,7 +72,7 @@ fetch(API_KEY, {
     letter-spacing: -1.5px;
     font-family: var(--font-code);
     text-align: left;
-    margin: 0rem 2rem 2rem 2rem;
+    margin: 0rem 0rem 1rem 1rem;
     background: -webkit-linear-gradient(317deg, #42d392 2%, #061147);
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -111,3 +112,37 @@ fetch(API_KEY, {
 
 }
 </style>
+
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const API_KEY = `${import.meta.env.VITE_API_URL}/pessoa/${route.query.id}`;
+const pessoaName = ref('');
+
+function getUsuario() {
+  fetch(API_KEY, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${route.query.token}`,
+    },
+  }).then(response => {
+    if (response.ok) {
+      response.json().then(resp => {
+        pessoaName.value = resp.nome_completo;
+      });
+    } else {
+      alert('Aconteceu um erro inesperado 😢👌');
+      console.log("Codigo:", response.status, 'Erro lançado:', response.statusText,);
+    }
+  });
+}
+
+onMounted(() => {
+  getUsuario();
+
+});
+
+</script>

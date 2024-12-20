@@ -9,8 +9,8 @@ import Button from '../commons/CustomButton.vue';
 
       <h1 class="grettings-text-h1">Bem vindo</h1>
       <h1 class="grettings-text">Ao Horibank 2.0</h1>
-      <h2 class="section-activities-h2">Nossas vantagens</h2>
-
+      
+      <h2 class="h2-CardContent-Title">Nossas vantagens</h2>
       <CardContent />
 
 
@@ -80,7 +80,7 @@ import Button from '../commons/CustomButton.vue';
     -webkit-text-fill-color: transparent;
   }
 
-  .section-activities-h2 {
+  .h2-CardContent-Title {
     font-size: 30px;
     font-weight: lighter;
     letter-spacing: -1.5px;
@@ -110,7 +110,7 @@ import Button from '../commons/CustomButton.vue';
     -webkit-text-fill-color: transparent;
   }
 
-  .section-activities-h2 {
+  .h2-CardContent-Title {
     color: white;
   }
 
