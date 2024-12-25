@@ -8,9 +8,9 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class LoginService {
     constructor(
-        private service: PrismaService,
-        private jwtService: JwtService,
-        private pessoaService: PessoaService
+        private readonly service: PrismaService,
+        private readonly jwtService: JwtService,
+        private readonly pessoaService: PessoaService
     ) {}
 
     async login(usuario: UsuarioDTO) {

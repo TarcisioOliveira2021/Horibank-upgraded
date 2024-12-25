@@ -7,7 +7,7 @@ import { AuthGuard } from '../login/auth.guard';
 export class PessoaController {
 
     constructor(
-        private pessoaService: PessoaService
+        private readonly pessoaService: PessoaService
     ) { }
 
     @Post('cadastrar')

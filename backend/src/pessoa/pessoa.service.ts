@@ -2,23 +2,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PessoaDTO } from './pessoa_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { parse } from 'path';
 
 @Injectable()
 export class PessoaService {
     constructor(
-        private prismaService: PrismaService
+        private readonly prismaService: PrismaService
     ) {
     }
 
     async cadastrarPessoa(pessoa: PessoaDTO){
         this.convertDataNascimento(pessoa);
-        const user = await this.verificarUsuarioExistente(pessoa.usuario);
-
-        if(user != null){
-            throw new BadRequestException('Usuário já cadastrado');
-        }
-
+        await this.verificarUsuarioExistente(pessoa.usuario);
         const senhaHas = await this.hashearSenha(pessoa.senha);
 
         return this.prismaService.pessoa.create(
@@ -45,15 +39,21 @@ export class PessoaService {
         return await bcrypt.hash(senha, salt);
     }
 
-    public verificarUsuarioExistente(usuario: string){
-        return this.prismaService.pessoa.findFirst({
+    async verificarUsuarioExistente(usuario: string){
+        const usuarioRetornado = await this.prismaService.pessoa.findFirstOrThrow({
             where: {
                 usuario: usuario
             }
         });
+
+        if(usuarioRetornado != null){
+            return usuarioRetornado;
+        }	
+
+        throw new BadRequestException('Usuário não encontrado');
     }
 
-    public async getPessoaId(pessoaId: string){ 
+    async getPessoaId(pessoaId: string){ 
         const pessoa = await this.prismaService.pessoa.findUnique({
             where: {
                 id: parseInt(pessoaId)

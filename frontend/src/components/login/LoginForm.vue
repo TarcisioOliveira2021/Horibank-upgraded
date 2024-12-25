@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import Button from '../commons/CustomButton.vue';
 import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { Form as VeeForm, Field, ErrorMessage, Form } from 'vee-validate';
+import { useRouter } from 'vue-router';
+import { Field, ErrorMessage, Form } from 'vee-validate';
 import * as yup from 'yup';
+import Swal from 'sweetalert2'
 
 const API_KEY = `${import.meta.env.VITE_API_URL}/login/logar`;
 const showPassword = ref(false);
@@ -31,38 +32,45 @@ function onSubmit(values: any) {
                 router.push({ path: '/conta-dashboard', query: { id: resp.id, token: resp.token } });
             });
         } else {
-            if(response.status === 401){
-                alert('Usuário ou senha inválidos.');
-            } else {
-                alert('Aconteceu um erro inesperado 😢👌');
-                console.log("Codigo:", response.status, 'Erro lançado:', response.statusText, );
-            }
+            response.json().then(resp => {
+                Swal.fire({
+                    title: 'Falha no processamento',
+                    text: `${resp.message} 😭😭`,
+                    icon: 'error',
+                    iconColor: '#42d392',
+                    confirmButtonText: 'Ok',
+                    confirmButtonColor: '#42d392',
+                })
+            });
         }
     });
 }
+
 </script>
 
 <template>
-        <Form @submit="onSubmit" :validation-schema="schema">
-            <Field class="usuario-field" name="login" placeholder="login" type="text" />
-            <ErrorMessage name="login"></ErrorMessage>
+    <Form @submit="onSubmit" :validation-schema="schema">
+
+        <Field class="usuario-field" name="login" placeholder="login" type="text" />
+        <ErrorMessage name="login"></ErrorMessage>
+
+        <div class="password-input">
+            <Field class="password-field" name="password" :type="showPassword ? 'text' : 'password'"
+                placeholder="password" />
+            <button type="button" class="toggle-password" @click="togglePasswordVisibility">
+                <span v-if="showPassword">🙈</span>
+                <span v-else>👁️</span>
+            </button>
+        </div>
+        <ErrorMessage name="password"></ErrorMessage>
 
 
-            <div class="password-input">
-                <Field class="password-field" name="password" :type="showPassword ? 'text' : 'password'"
-                    placeholder="password" />
-                <button type="button" class="toggle-password" @click="togglePasswordVisibility">
-                    <span v-if="showPassword">🙈</span>
-                    <span v-else>👁️</span>
-                </button>
-            </div>
-            <ErrorMessage name="senha"></ErrorMessage>
 
-            <div class="start-buttons">
-                <Button botaoTexto="Logar"></Button>
-                <Button botaoTexto="Voltar" route-botao="/"></Button>
-            </div>
-        </Form>
+        <div class="start-buttons">
+            <Button botaoTexto="Logar"></Button>
+            <Button botaoTexto="Voltar" route-botao="/"></Button>
+        </div>
+    </Form>
 </template>
 
 <style scoped>
@@ -111,8 +119,8 @@ span {
         right: 20px;
         top: 20px;
     }
-    
-    .password-input{
+
+    .password-input {
         display: flex;
         flex-direction: column;
         justify-content: center;

@@ -5,8 +5,8 @@ import NewUsuario from './components/cadastro/NewUsuarioScreen.vue';
 import Index from './components/home/Index.vue';
 const routes = [
   { path: '/cadastrar-pessoa', component: NewUsuario},
-  { path: '/acessar-conta', component: LoginScreen },
-  { path: '/conta-dashboard', component: ContaDash },
+  { path: '/acessar-conta', component: LoginScreen, props:true },
+  { path: '/conta-dashboard', component: ContaDash, props:true  },
   { path: '/', component: Index }
 ];
 
@@ -14,5 +14,6 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
 
 export { router };

@@ -27,7 +27,7 @@
   .card-container {
     place-items: center;
     width: 500px;
-    height: auto;
+    height: 700px;
     margin: 0 5px 0 5px;
     box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
     border-radius: 15px;
