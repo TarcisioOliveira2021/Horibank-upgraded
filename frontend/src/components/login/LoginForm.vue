@@ -51,12 +51,12 @@ function onSubmit(values: any) {
 <template>
     <Form @submit="onSubmit" :validation-schema="schema">
 
-        <Field class="usuario-field" name="login" placeholder="login" type="text" />
+        <Field class="usuario-field" name="login" placeholder="login" type="text" id="usuario-field"/>
         <ErrorMessage name="login"></ErrorMessage>
 
         <div class="password-input">
             <Field class="password-field" name="password" :type="showPassword ? 'text' : 'password'"
-                placeholder="password" />
+                placeholder="password" id="password-field"/>
             <button type="button" class="toggle-password" @click="togglePasswordVisibility">
                 <span v-if="showPassword">🙈</span>
                 <span v-else>👁️</span>
@@ -128,6 +128,16 @@ span {
     }
 
     .start-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        flex-direction: column;
+        align-items: center;
+        margin: 1rem 1rem 2rem 1rem;
+    }
+
+    /* Dark mode */
+    .start-buttons-dark {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-evenly;

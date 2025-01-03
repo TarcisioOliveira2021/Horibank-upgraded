@@ -4,68 +4,81 @@ import Button from '../commons/CustomButton.vue';
 import { onMounted, ref, watchEffect } from 'vue';
 const isDark = ref(false);
 
+const elemetns = ref<{
+  inicio: HTMLElement | null;
+  cardContainer: HTMLElement | null;
+  grettingsTitle: HTMLElement | null;
+  grettingsSubtitle: HTMLElement | null;
+  cardContentTitle: HTMLElement | null;
+  activities: NodeListOf<HTMLDivElement> | undefined;
+  btnRegistro: HTMLElement | null;
+  btnAcessar: HTMLElement | null;
+} | null>(null);
+
+
+
 watchEffect(() => {
-  const elemetns = getUiElements();
+  if (elemetns.value &&
+    elemetns.value.inicio &&
+    elemetns.value.cardContainer &&
+    elemetns.value.grettingsTitle &&
+    elemetns.value.grettingsSubtitle &&
+    elemetns.value.cardContentTitle &&
+    elemetns.value.activities &&
+    elemetns.value.btnAcessar &&
+    elemetns.value.btnRegistro
+  ) {
+    if (isDark.value) {
+      elemetns.value.inicio.classList.remove('inicio');
+      elemetns.value.inicio.classList.add('inicio-dark');
 
-  if (isDark.value) {
-    elemetns.inicio?.classList.remove('inicio');
-    elemetns.inicio?.classList.add('inicio-dark');
+      elemetns.value.cardContainer.classList.remove('card-container');
+      elemetns.value.cardContainer.classList.add('card-container-dark');
 
-    elemetns.cardContainer?.classList.remove('card-container');
-    elemetns.cardContainer?.classList.add('card-container-dark');
+      elemetns.value.grettingsTitle.classList.remove('grettings-title');
+      elemetns.value.grettingsTitle.classList.add('grettings-title-dark');
+      elemetns.value.grettingsSubtitle.classList.remove('grettings-subtitle');
+      elemetns.value.grettingsSubtitle.classList.add('grettings-subtitle-dark');
 
-    elemetns.grettingsTitle?.classList.remove('grettings-title');
-    elemetns.grettingsTitle?.classList.add('grettings-title-dark');
-    elemetns.grettingsSubtitle?.classList.remove('grettings-subtitle');
-    elemetns.grettingsSubtitle?.classList.add('grettings-subtitle-dark');
+      elemetns.value.cardContentTitle.classList.remove('card-content-title');
+      elemetns.value.cardContentTitle.classList.add('card-content-title-dark');
 
-    elemetns.cardContentTitle?.classList.remove('card-content-title');
-    elemetns.cardContentTitle?.classList.add('card-content-title-dark');
+      elemetns.value.activities.forEach(activity => {
+        activity.classList.remove('card');
+        activity.classList.add('card-dark');
+      });
 
-    elemetns.card1?.classList.remove('card');
-    elemetns.card1?.classList.add('card-dark');
-    elemetns.card2?.classList.remove('card');
-    elemetns.card2?.classList.add('card-dark');
-    elemetns.card3?.classList.remove('card');
-    elemetns.card3?.classList.add('card-dark');
-    elemetns.card4?.classList.remove('card');
-    elemetns.card4?.classList.add('card-dark');
-
-    elemetns.btnRegistro?.classList.remove('btn');
-    elemetns.btnRegistro?.classList.add('btn-dark');
-    elemetns.btnAcessar?.classList.remove('btn');
-    elemetns.btnAcessar?.classList.add('btn-dark');
+      elemetns.value.btnRegistro.classList.remove('btn');
+      elemetns.value.btnRegistro.classList.add('btn-dark');
+      elemetns.value.btnAcessar.classList.remove('btn');
+      elemetns.value.btnAcessar.classList.add('btn-dark');
 
 
-  } else {
-    elemetns.inicio?.classList.remove('inicio-dark');
-    elemetns.inicio?.classList.add('inicio');
+    } else {
+      elemetns.value.inicio.classList.remove('inicio-dark');
+      elemetns.value.inicio.classList.add('inicio');
 
-    elemetns.cardContainer?.classList.remove('card-container-dark');
-    elemetns.cardContainer?.classList.add('card-container');
+      elemetns.value.cardContainer.classList.remove('card-container-dark');
+      elemetns.value.cardContainer?.classList.add('card-container');
 
-    elemetns.grettingsTitle?.classList.remove('grettings-title-dark');
-    elemetns.grettingsTitle?.classList.add('grettings-title');
-    elemetns.grettingsSubtitle?.classList.remove('grettings-subtitle-dark');
-    elemetns.grettingsSubtitle?.classList.add('grettings-subtitle');
+      elemetns.value.grettingsTitle.classList.remove('grettings-title-dark');
+      elemetns.value.grettingsTitle.classList.add('grettings-title');
+      elemetns.value.grettingsSubtitle.classList.remove('grettings-subtitle-dark');
+      elemetns.value.grettingsSubtitle.classList.add('grettings-subtitle');
 
-    elemetns.cardContentTitle?.classList.remove('card-content-title-dark');
-    elemetns.cardContentTitle?.classList.add('card-content-title');
+      elemetns.value.cardContentTitle.classList.remove('card-content-title-dark');
+      elemetns.value.cardContentTitle.classList.add('card-content-title');
 
-    elemetns.card1?.classList.remove('card-dark');
-    elemetns.card1?.classList.add('card');
-    elemetns.card2?.classList.remove('card-dark');
-    elemetns.card2?.classList.add('card');
-    elemetns.card3?.classList.remove('card-dark');
-    elemetns.card3?.classList.add('card');
-    elemetns.card4?.classList.remove('card-dark');
-    elemetns.card4?.classList.add('card');
+      elemetns.value.activities.forEach(activity => {
+        activity.classList.remove('card-dark');
+        activity.classList.add('card');
+      });
 
-    elemetns.btnRegistro?.classList.remove('btn-dark');
-    elemetns.btnRegistro?.classList.add('btn');
-    elemetns.btnAcessar?.classList.remove('btn-dark');
-    elemetns.btnAcessar?.classList.add('btn');
-
+      elemetns.value.btnRegistro.classList.remove('btn-dark');
+      elemetns.value.btnRegistro.classList.add('btn');
+      elemetns.value.btnAcessar.classList.remove('btn-dark');
+      elemetns.value.btnAcessar.classList.add('btn');
+    }
   }
 });
 
@@ -74,41 +87,78 @@ function getUiElements() {
   const inicio = document.getElementById('inicio');
   const cardContainer = document.getElementById('card-container');
   const grettingsTitle = document.getElementById('grettings-title');
-  const grettingsSubtitle= document.getElementById('grettings-subtitle');
+  const grettingsSubtitle = document.getElementById('grettings-subtitle');
   const cardContentTitle = document.getElementById('card-content-title');
 
-  const card1 = document.getElementById('card-1');
-  const card2 = document.getElementById('card-2');
-  const card3 = document.getElementById('card-3');
-  const card4 = document.getElementById('card-4');
-
+  const activities = document.getElementById('activities')?.querySelectorAll('div');
   const btnRegistro = document.getElementById('registro-button');
   const btnAcessar = document.getElementById('acessar-button');
 
-  return { 
-    inicio, 
-    cardContainer, 
-    grettingsTitle, 
-    grettingsSubtitle, 
-    cardContentTitle, 
-    card1, 
-    card2, 
-    card3, 
-    card4,
+  return {
+    inicio,
+    cardContainer,
+    grettingsTitle,
+    grettingsSubtitle,
+    cardContentTitle,
+    activities,
     btnRegistro,
     btnAcessar
   };
 }
 
 onMounted(() => {
-  const elemetns = getUiElements();
+  elemetns.value = getUiElements();
 
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    elemetns.inicio?.classList.remove('inicio');
-    elemetns.inicio?.classList.add('inicio-dark');
+    elemetns.value.inicio?.classList.remove('inicio');
+    elemetns.value.inicio?.classList.add('inicio-dark');
+    elemetns.value.cardContainer?.classList.remove('card-container');
+    elemetns.value.cardContainer?.classList.add('card-container-dark');
+
+    elemetns.value.grettingsTitle?.classList.remove('grettings-title');
+    elemetns.value.grettingsTitle?.classList.add('grettings-title-dark');
+    elemetns.value.grettingsSubtitle?.classList.remove('grettings-subtitle');
+    elemetns.value.grettingsSubtitle?.classList.add('grettings-subtitle-dark');
+
+    elemetns.value.cardContentTitle?.classList.remove('card-content-title');
+    elemetns.value.cardContentTitle?.classList.add('card-content-title-dark');
+
+    elemetns.value.activities?.forEach(activity => {
+      activity.classList.remove('card');
+      activity.classList.add('card-dark');
+    });
+
+    elemetns.value.btnRegistro?.classList.remove('btn');
+    elemetns.value.btnRegistro?.classList.add('btn-dark');
+    elemetns.value.btnAcessar?.classList.remove('btn');
+    elemetns.value.btnAcessar?.classList.add('btn-dark');
+
   } else {
-    elemetns.inicio?.classList.remove('inicio-dark');
-    elemetns.inicio?.classList.add('inicio');
+    elemetns.value.inicio?.classList.remove('inicio-dark');
+    elemetns.value.inicio?.classList.add('inicio');
+    elemetns.value.inicio?.classList.remove('inicio-dark');
+    elemetns.value.inicio?.classList.add('inicio');
+
+    elemetns.value.cardContainer?.classList.remove('card-container-dark');
+    elemetns.value.cardContainer?.classList.add('card-container');
+
+    elemetns.value.grettingsTitle?.classList.remove('grettings-title-dark');
+    elemetns.value.grettingsTitle?.classList.add('grettings-title');
+    elemetns.value.grettingsSubtitle?.classList.remove('grettings-subtitle-dark');
+    elemetns.value.grettingsSubtitle?.classList.add('grettings-subtitle');
+
+    elemetns.value.cardContentTitle?.classList.remove('card-content-title-dark');
+    elemetns.value.cardContentTitle?.classList.add('card-content-title');
+
+    elemetns.value.activities?.forEach(activity => {
+      activity.classList.remove('card-dark');
+      activity.classList.add('card');
+    });
+
+    elemetns.value.btnRegistro?.classList.remove('btn-dark');
+    elemetns.value.btnRegistro?.classList.add('btn');
+    elemetns.value.btnAcessar?.classList.remove('btn-dark');
+    elemetns.value.btnAcessar?.classList.add('btn');
   }
 
 });
@@ -129,12 +179,14 @@ onMounted(() => {
       </div>
 
 
-      <CardContent ref="cardContainer"/>
+      <CardContent ref="cardContainer" />
 
 
       <div class="start-buttons">
-        <Button id="registro-button" botao-texto="Registrar-se" :route-botao="{path: '/cadastrar-pessoa', query: {darkModeIsActive: isDark}}"></Button>
-        <Button id="acessar-button" botao-texto="Acessar Conta" :route-botao="{path: '/acessar-conta', query: {darkModeIsActive: isDark}}"></Button>
+        <Button id="registro-button" botao-texto="Registrar-se"
+          :route-botao="{ path: '/cadastrar-pessoa', query: { darkModeIsActive: isDark } }"></Button>
+        <Button id="acessar-button" botao-texto="Acessar Conta"
+          :route-botao="{ path: '/acessar-conta', query: { darkModeIsActive: isDark } }"></Button>
       </div>
 
     </div>
@@ -238,7 +290,7 @@ onMounted(() => {
     background-color: rgba(34, 29, 29, 0.6);
   }
 
-  .grettings-title-dark{
+  .grettings-title-dark {
     font-size: 40px;
     line-height: 1.25;
     font-weight: 900;
@@ -249,7 +301,7 @@ onMounted(() => {
     color: white;
   }
 
-  .grettings-subtitle-dark{
+  .grettings-subtitle-dark {
     font-size: 40px;
     line-height: 1.25;
     font-weight: 900;
@@ -257,14 +309,14 @@ onMounted(() => {
     font-family: var(--font-code);
     text-align: left;
     margin: 0rem 2rem 2rem 2rem;
-    background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.6) 1%,  rgba(146, 145, 145, 0.6));
+    background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.6) 1%, rgba(146, 145, 145, 0.6));
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
 }
 
-@media (max-width:1024px) { 
+@media (max-width:1024px) {
   .card-container {
     height: 100vh;
     overflow-y: scroll;

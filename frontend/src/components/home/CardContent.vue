@@ -3,7 +3,7 @@
 <template>
     <h2 class="card-content-title" id="card-content-title">Nossas vantagens</h2>
 
-    <section class="activities">
+    <section class="activities" id="activities">
         <div class="card" id="card-1">
             <h2>Criação de contas</h2>
             <p>Abra sua conta corrente ou poupança e tenha acesso a diversos benefícios</p>
@@ -98,6 +98,7 @@
         transition: 0.2s;
         background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.6) 2%, #ffffff);
         color: #2c3e50;
+        -webkit-text-fill-color: #2c3e50;
     }
 }
 

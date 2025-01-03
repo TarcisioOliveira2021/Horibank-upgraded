@@ -7,23 +7,30 @@ const route = useRoute();
 const isDark = ref(route.query.darkModeIsActive === 'true');
 
 const elemetns = ref<
-{ inicio: HTMLElement | null; 
-  cardContainer: HTMLElement | null;
-  text: HTMLElement | null; 
-  subtext: HTMLElement | null;  
-} | null>(null);
+  {
+    inicio: HTMLElement | null;
+    cardContainer: HTMLElement | null;
+    text: HTMLElement | null;
+    subtext: HTMLElement | null;
+    usuarioInput: HTMLElement | null;
+    passwordInput: HTMLElement | null;
+  } | null>(null);
 
 function getUiElements() {
   const inicio = document.getElementById('inicio');
   const cardContainer = document.getElementById('card-container');
   const text = document.getElementById('text');
   const subtext = document.getElementById('subtext');
+  const usuarioInput = document.getElementById('usuario-field');
+  const passwordInput = document.getElementById('password-field');
 
   return {
     inicio,
     cardContainer,
     text,
-    subtext
+    subtext,
+    usuarioInput,
+    passwordInput
   };
 }
 
@@ -40,12 +47,14 @@ onMounted(() => {
 });
 
 watchEffect(() => {
-  if (elemetns.value && 
-      elemetns.value.inicio && 
-      elemetns.value.cardContainer &&
-      elemetns.value.text &&
-      elemetns.value.subtext
-    ) {
+  if (elemetns.value &&
+    elemetns.value.inicio &&
+    elemetns.value.cardContainer &&
+    elemetns.value.text &&
+    elemetns.value.subtext &&
+    elemetns.value.usuarioInput &&
+    elemetns.value.passwordInput
+  ) {
     if (isDark.value) {
       elemetns.value.inicio.classList.remove('inicio');
       elemetns.value.inicio.classList.add('inicio-dark');
@@ -53,6 +62,8 @@ watchEffect(() => {
       elemetns.value.cardContainer.classList.add('card-container-dark');
       elemetns.value.text.classList.remove('text');
       elemetns.value.text.classList.add('text-dark');
+      elemetns.value.subtext.classList.remove('subtext');
+      elemetns.value.subtext.classList.add('subtext-dark');
     } else {
       elemetns.value.inicio.classList.remove('inicio-dark');
       elemetns.value.inicio.classList.add('inicio');
@@ -60,6 +71,8 @@ watchEffect(() => {
       elemetns.value.cardContainer.classList.add('card-container');
       elemetns.value.text.classList.remove('text-dark');
       elemetns.value.text.classList.add('text');
+      elemetns.value.subtext.classList.remove('subtext-dark');
+      elemetns.value.subtext.classList.add('subtext');
     }
   }
 });
@@ -140,6 +153,7 @@ watchEffect(() => {
     letter-spacing: -1.5px;
     font-family: var(--font-code);
     text-align: center;
+    color: #2c3e50;
   }
 
   /* DarkMode */
@@ -168,7 +182,7 @@ watchEffect(() => {
     background-color: rgba(34, 29, 29, 0.6);
   }
 
-  .text-dark{
+  .text-dark {
     width: auto;
     font-size: 40px;
     line-height: 1.25;
@@ -177,9 +191,18 @@ watchEffect(() => {
     font-family: var(--font-code);
     text-align: left;
     margin: 2rem 2rem 0rem 2rem;
-    background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.6) 1%,  rgba(146, 145, 145, 0.6));
+    background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.6) 1%, rgba(146, 145, 145, 0.6));
     background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+
+  .subtext-dark {
+    font-size: 18px;
+    font-weight: lighter;
+    letter-spacing: -1.5px;
+    font-family: var(--font-code);
+    text-align: center;
+    color: white !important;
   }
 }
 
