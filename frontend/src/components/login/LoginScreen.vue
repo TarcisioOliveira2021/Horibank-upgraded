@@ -14,6 +14,7 @@ const elemetns = ref<
     subtext: HTMLElement | null;
     usuarioInput: HTMLElement | null;
     passwordInput: HTMLElement | null;
+    buttons: NodeListOf<HTMLButtonElement> | undefined;
   } | null>(null);
 
 function getUiElements() {
@@ -23,6 +24,7 @@ function getUiElements() {
   const subtext = document.getElementById('subtext');
   const usuarioInput = document.getElementById('usuario-field');
   const passwordInput = document.getElementById('password-field');
+  const buttons = document.getElementById('start-buttons')?.querySelectorAll('button');
 
   return {
     inicio,
@@ -30,7 +32,8 @@ function getUiElements() {
     text,
     subtext,
     usuarioInput,
-    passwordInput
+    passwordInput,
+    buttons
   };
 }
 
@@ -64,6 +67,11 @@ watchEffect(() => {
       elemetns.value.text.classList.add('text-dark');
       elemetns.value.subtext.classList.remove('subtext');
       elemetns.value.subtext.classList.add('subtext-dark');
+      elemetns.value.buttons?.forEach((button) => {
+        button.classList.remove('btn');
+        button.classList.add('btn-dark');
+      });
+
     } else {
       elemetns.value.inicio.classList.remove('inicio-dark');
       elemetns.value.inicio.classList.add('inicio');
@@ -73,6 +81,10 @@ watchEffect(() => {
       elemetns.value.text.classList.add('text');
       elemetns.value.subtext.classList.remove('subtext-dark');
       elemetns.value.subtext.classList.add('subtext');
+      elemetns.value.buttons?.forEach((button) => {
+        button.classList.remove('btn-dark');
+        button.classList.add('btn');
+      });
     }
   }
 });
