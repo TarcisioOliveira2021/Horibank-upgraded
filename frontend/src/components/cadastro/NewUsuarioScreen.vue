@@ -1,29 +1,52 @@
 <script setup lang="ts">
-  import Form from './NewUsuarioForm.vue';
+import Form from './NewUsuarioForm.vue';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const isDark = ref(route.query.darkModeIsActive === 'true');
 </script>
 
 <template>
   <div class="inicio">
     <div class="card-container">
+
+      <div class="header" id="header">
+        <v-switch class="toogle" v-model="isDark" inset color="#42d392"></v-switch>
+      </div>
+
+
       <h2 class="text">Cadastro</h2>
       <p class="subtext">Faça parte de uma nova transformação digital</p>
-
-      <Form style="padding-top: 10px; padding-bottom: 24px;"></Form>
+      <Form></Form>
     </div>
+
   </div>
 </template>
 
 
 <style scoped>
-.inicio {
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  height: 100vh;
-  width: 100%;
-}
-
 @media (max-width: 1920px) {
+  .toogle {
+    margin: 1rem 1rem 0rem 1rem;
+    display: inline-flex !important;
+    align-self: flex-end;
+  }
+
+  .header {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .inicio {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height: 100vh;
+    width: 100%;
+  }
+
   .card-container {
     place-items: center;
     width: 500px;
