@@ -4,7 +4,7 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
 import { ref, watch, onMounted } from 'vue';
 import { vMaska } from 'maska/vue';
 import * as yup from 'yup';
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 
 const nuCPF = ref('');
 const dataNascimento = ref('');
@@ -79,7 +79,7 @@ function onSubmitForm(values: any) {
 </script>
 
 <template>
-    <Form @submit="onSubmitForm" :validation-schema="schema">
+    <Form @submit="onSubmitForm" :validation-schema="schema" id="form-cadastro">
         <div class="usuario-field">
             <div class="usuario-elements">
                 <label for="usuario">Nome de usuário:</label>
@@ -146,7 +146,7 @@ function onSubmitForm(values: any) {
             </VueDatePicker>
         </div>
 
-        <div class="start-buttons">
+        <div class="start-buttons" id="start-buttons">
             <Button botaoTexto="Cadastrar"></Button>
             <Button botaoTexto="Voltar" route-botao="/"></Button>
         </div>
@@ -160,7 +160,7 @@ function onSubmitForm(values: any) {
         display: grid;
         justify-items: center;
         grid-template-columns: repeat(2, 1fr);
-        margin: 1rem 1rem 1rem 1rem;
+        margin: 1rem 1rem 5rem 1rem;
     }
 
     .toggle-password {
@@ -214,6 +214,7 @@ function onSubmitForm(values: any) {
     label {
         margin-top: 1rem;
         width: 200px;
+        color: #2c3e50;
     }
 
     .input-login {
@@ -269,6 +270,13 @@ function onSubmitForm(values: any) {
         box-shadow: inset 0 0 4px #42d392, 0 0 5px #42d392;
     }
 
+
+    /* dark mode */
+    .label-dark{
+        margin-top: 1rem;
+        width: 200px;
+        color: white;
+    }
 }
 
 @media (max-width:1024px) {
