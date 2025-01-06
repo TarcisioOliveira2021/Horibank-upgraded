@@ -15,9 +15,11 @@ const elemetns = ref<{
   btnAcessar: HTMLElement | null;
 } | null>(null);
 
-
-
 watchEffect(() => {
+  // console.log("Tela no tamanho 1920px",window.matchMedia('(max-width: 1920px)'));
+  // console.log("Tela no tamanho 1024px",window.matchMedia('(max-width: 1024px)'));
+
+
   if (elemetns.value &&
     elemetns.value.inicio &&
     elemetns.value.cardContainer &&
@@ -194,7 +196,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@media (max-width: 1920px) {
+@media (min-width: 1281px) and (max-width: 1920px) {
   .toogle {
     margin: 1rem 1rem 0rem 1rem;
     display: inline-flex !important;
@@ -316,7 +318,11 @@ onMounted(() => {
 
 }
 
-@media (max-width:1024px) {
+@media (min-width: 100px) and (max-width: 1280px) {
+  .inicio{
+    background-color: #42d392;
+  }
+
   .card-container {
     height: 100vh;
     overflow-y: scroll;
