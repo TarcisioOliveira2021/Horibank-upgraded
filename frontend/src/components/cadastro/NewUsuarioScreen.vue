@@ -42,6 +42,7 @@ const isDark = ref(route.query.darkModeIsActive === 'true');
   .inicio {
     align-items: center;
     justify-content: center;
+    background-color: white;
     display: flex;
     height: 100vh;
     width: 100%;
@@ -49,12 +50,11 @@ const isDark = ref(route.query.darkModeIsActive === 'true');
 
   .card-container {
     place-items: center;
-    width: 500px;
-    height: 700px;
+    height: 80vh;
     margin: 0 5px 0 5px;
     box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
     border-radius: 15px;
-    display: flex;
+    display: grid;
     flex-direction: column;
     transition: 0.5s;
     justify-content: center;

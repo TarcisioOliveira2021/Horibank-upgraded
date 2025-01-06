@@ -4,17 +4,20 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
 import { ref, watch, onMounted } from 'vue';
 import { vMaska } from 'maska/vue';
 import * as yup from 'yup';
+import Swal from 'sweetalert2';
 
-const cpf = ref('');
+const nuCPF = ref('');
 const dataNascimento = ref('');
-const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/login`;
+const showPassword = ref(false);
+const CADASTRAR_ROUTE = import.meta.env.VITE_CADASTRAR_URL;
 
 const schema = yup.object({
-    fullName: yup.string().required('O campo nome completo é obrigatório'),
-    usuario: yup.string().min(6).max(20).required('O campo usuário é obrigatório'),
-    cpf: yup.string().required('O campo cpf é obrigatório'),
-    email: yup.string().email().required('O campo email é obrigatório'),
-    celular: yup.string().required('O campo celular é obrigatório').matches(/^\(\d{2}\) 9 \d{4}-\d{4}$/)
+    nuCPF: yup.string().required('O campo obrigatório'),
+    usuario: yup.string().min(6).max(20).required('O campo obrigatório'),
+    nome_completo: yup.string().required('O campo obrigatório'),
+    email: yup.string().email().required('O campo obrigatório'),
+    numero_celular: yup.string().required('O campo obrigatório').matches(/^\(\d{2}\) 9 \d{4}-\d{4}$/),
+    senha: yup.string().min(8).max(16).required('O campo obrigatório').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, um número e um caractere especial'),
 }).required();
 
 const formatacaoDataNascimento = (dataNascimento: Date) => {
@@ -25,9 +28,13 @@ const formatacaoDataNascimento = (dataNascimento: Date) => {
     return `${dia}/${mes}/${ano}`;
 }
 
-watch(cpf, (valorAtual) => {
-    cpf.value = valorAtual;
+watch(nuCPF, (valorAtual) => {
+    nuCPF.value = valorAtual;
 });
+
+const togglePasswordVisibility = () => {
+    showPassword.value = !showPassword.value;
+};
 
 onMounted(() => {
     //Personalinzação do datepicker
@@ -41,85 +48,169 @@ onMounted(() => {
 
 function onSubmitForm(values: any) {
     console.log(values);
+
+
+    // fetch(CADASTRAR_ROUTE, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify(values)
+    // }).then(response => {
+    //     console.log(response);
+    //     if (response.ok) {
+    //         response.json().then(resp => {
+    //             router.push({ path: '/conta-dashboard', query: { id: resp.id, token: resp.token } });
+    //         });
+    //     } else {
+    //         response.json().then(resp => {
+    //             Swal.fire({
+    //                 title: 'Falha no processamento',
+    //                 text: `${resp.message} 😭😭`,
+    //                 icon: 'error',
+    //                 iconColor: '#42d392',
+    //                 confirmButtonText: 'Ok',
+    //                 confirmButtonColor: '#42d392',
+    //             })
+    //         });
+    //     }
+    // });
 }
 </script>
 
 <template>
     <Form @submit="onSubmitForm" :validation-schema="schema">
         <div class="usuario-field">
-            <label for="usuario">Nome de usuário:</label>
-            <Field class="input-login" name="usuario" placeholder="Digite o nome de usuario" />
+            <div class="usuario-elements">
+                <label for="usuario">Nome de usuário:</label>
+                <Field class="input-login" name="usuario" placeholder="Digite o nome de usuario" />
+            </div>
             <ErrorMessage name="usuario"></ErrorMessage>
         </div>
 
         <div class="cpf-field">
-            <label for="cpf">Número do CPF:</label>
-            <Field class="input-login" v-maska="'###.###.###-##'" name="cpf" placeholder="Digite o número do CPF" />
-            <ErrorMessage name="cpf"></ErrorMessage>
+            <div class="cpf-elements">
+                <label for="nuCPF">Número do CPF:</label>
+                <Field class="input-login" v-maska="'###.###.###-##'" name="nuCPF"
+                    placeholder="Digite o número do CPF" />
+            </div>
+            <ErrorMessage name="nuCPF"></ErrorMessage>
         </div>
 
-        <div class="full-name-field">
-            <label for="fullName">Nome completo:</label>
-            <Field class="input-login" name="fullName" placeholder="Digite o nome completo" />
-            <ErrorMessage name="fullName"></ErrorMessage>
+        <div class="nome-completo-field">
+            <div class="nome-completo-elements">
+                <label for="nome_completo">Nome completo:</label>
+                <Field class="input-login" name="nome_completo" placeholder="Digite o nome completo" />
+            </div>
+            <ErrorMessage name="nome_completo"></ErrorMessage>
         </div>
 
         <div class="email-field">
-            <label for="email">Email:</label>
-            <Field class="input-login" name="email" placeholder="Digite o e-mail" type="email" />
+            <div class="email-elements">
+                <label for="email">Email:</label>
+                <Field class="input-login" name="email" placeholder="Digite o e-mail" type="email" />
+            </div>
             <ErrorMessage name="email"></ErrorMessage>
         </div>
 
         <div class="celular-field">
-            <label for="celular">Número do celular:</label>
-            <Field class="input-login" v-maska="'(##) # ####-####'" name="celular"
-                placeholder="Digite o número do celular" />
-            <ErrorMessage name="celular"></ErrorMessage>
+            <div class="celular-elements">
+                <label for="numero_celular">Número do celular:</label>
+                <Field class="input-login" v-maska="'(##) # ####-####'" name="numero_celular"
+                    placeholder="Digite o número do celular" />
+            </div>
+            <ErrorMessage name="numero_celular"></ErrorMessage>
+        </div>
+
+        <div class="password-field">
+            <div class="password-elements">
+                <label for="senha">Senha:</label>
+                <Field class="input-login" name="senha" :type="showPassword ? 'text' : 'password'"
+                    placeholder="Digite a sua senha" id="password-field" />
+                <button type="button" class="toggle-password" @click="togglePasswordVisibility">
+                    <span v-if="showPassword">🙈</span>
+                    <span v-else>👁️</span>
+                </button>
+            </div>
+            <ErrorMessage name="senha"></ErrorMessage>
         </div>
 
         <div class="born-field">
             <label for="born-field">Data de nascimento:</label>
             <VueDatePicker v-model="dataNascimento" auto-apply :format="formatacaoDataNascimento"
                 :enable-time-picker="false">
-                <template
-                    #dp-input="{ value, onInput, onEnter, onTab, onClear, onBlur, onKeypress, onPaste, isMenuOpen }">
-                    <input type="text" class="input-date" :value="value" placeholder="Informe a data" required />
+                <template #dp-input="{ value }">
+                    <input type="text" class="input-date" :value="value" placeholder="Informe a data" required
+                        readonly />
                 </template>
-
             </VueDatePicker>
-
         </div>
 
         <div class="start-buttons">
             <Button botaoTexto="Cadastrar"></Button>
             <Button botaoTexto="Voltar" route-botao="/"></Button>
         </div>
+
     </Form>
-
-
 </template>
 
 <style scoped>
-form :where(.usuario-field, .cpf-field, .full-name-field, .born-field, .email-field),
-.celular-field,
-.dp__main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-span {
-    align-self: center;
-    color: red;
-}
-
-:where(.usuario-field, .cpf-field, .born-field, .full-name-field, .email-field, .celular-field) {
-    align-items: baseline;
-    height: 70px;
-}
-
 @media (max-width: 1920px) {
+    form {
+        display: grid;
+        justify-items: center;
+        grid-template-columns: repeat(2, 1fr);
+        margin: 1rem 1rem 1rem 1rem;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 20px;
+        top: 42px;
+    }
+
+    .usuario-field,
+    .usuario-elements,
+    .cpf-field,
+    .cpf-elements,
+    .nome-completo-field,
+    .nome-completo-elements,
+    .born-field,
+    .email-field,
+    .email-elements,
+    .celular-field,
+    .celular-elements,
+    .password-elements,
+    .password-field,
+    .dp__main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .password-elements {
+        position: relative;
+    }
+
+    span {
+        align-self: center;
+        color: red;
+        width: 220px;
+        font-size: 14px;
+    }
+
+    .usuario-elements,
+    .cpf-elements,
+    .born-field,
+    .nome-completo-elements,
+    .email-elements,
+    .celular-elements,
+    .password-elements {
+        align-items: baseline;
+        height: 70px;
+    }
+
     label {
         margin-top: 1rem;
         width: 200px;
@@ -129,14 +220,17 @@ span {
         width: 220px;
         height: 30px;
         padding: 0px;
-        margin: 0rem 1rem 0rem 1rem;
-        border-radius: 10px;
-        border: none;
+        margin: 0rem 1rem 0rem 1rem !important;
+        border-radius: 10px !important;
+        border: none !important;
         transition: 0.5s;
-        align-content: center;
         text-align: center;
         cursor: pointer;
         background-color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative !important;
     }
 
     .input-date {
@@ -154,12 +248,12 @@ span {
 
     .start-buttons {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
         flex-direction: column;
         align-items: center;
-        margin: 1rem 1rem 2rem 1rem;
-        padding-bottom: 50px;
+        margin: 2rem 1rem 2rem 1rem;
+        grid-column: span 2;
+        justify-content: center;
+        gap: 1rem;
     }
 
     .input-login:focus,
@@ -178,12 +272,12 @@ span {
 }
 
 @media (max-width:1024px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+
     .start-buttons {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin: 1rem 1rem 2rem 1rem;
+        grid-column: span 1;
     }
 }
 </style>

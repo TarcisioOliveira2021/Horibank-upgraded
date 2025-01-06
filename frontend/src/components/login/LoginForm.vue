@@ -6,13 +6,13 @@ import { Field, ErrorMessage, Form } from 'vee-validate';
 import * as yup from 'yup';
 import Swal from 'sweetalert2'
 
-const API_KEY = `${import.meta.env.VITE_API_URL}/login/logar`;
+const LOGIN_ROUTE = import.meta.env.VITE_LOGIN_URL;
 const showPassword = ref(false);
 const router = useRouter();
 
 const schema = yup.object({
-    login: yup.string().min(5).max(20).required('Field login is required'),
-    password: yup.string().min(8).max(20).required('Field password is required')
+    login: yup.string().min(5).max(20).required('O campo obrigatório'),
+    password: yup.string().min(8).max(20).required('O campo obrigatório').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
 }).required();
 
 const togglePasswordVisibility = () => {
@@ -20,7 +20,7 @@ const togglePasswordVisibility = () => {
 };
 
 function onSubmit(values: any) {
-    fetch(API_KEY, {
+    fetch(LOGIN_ROUTE, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -86,7 +86,8 @@ span {
 
 
 @media (max-width: 1920px) {
-    :where(.usuario-field, .password-field) {
+    .usuario-field, 
+    .password-field{
         position: relative !important;
         width: 220px;
         height: 30px;
@@ -101,12 +102,14 @@ span {
         background-color: white !important;
     }
 
-    :where(.usuario-field, .password-field):focus {
+    .usuario-field:focus, 
+    .password-field:focus {
         outline: none;
         box-shadow: inset 0 1px 1px #42d392, 0 0 8px #42d392;
     }
 
-    :where(.usuario-field, .password-field):hover {
+    .usuario-field:hover 
+    .password-field:hover {
         outline: none;
         border-color: #42d392;
         box-shadow: inset 0 0 4px #42d392, 0 0 5px #42d392;
