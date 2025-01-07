@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   botaoTexto: string
-  routeBotao?: string | { path: string, query?: Record<string, any>}
+  routeBotao?: string
 }
 
 defineProps<Props>()

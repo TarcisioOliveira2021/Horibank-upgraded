@@ -2,18 +2,8 @@
 import CardContent from './CardContent.vue';
 import Button from '../commons/CustomButton.vue';
 import { onMounted, ref, watchEffect } from 'vue';
-import { useRoute } from 'vue-router';
 
-const route = useRoute();
 const isDark = ref(false);
-
-if(route.query.darkModeIsActive) {
-  console.log("A rota tem o darkMode");
-  console.log("O valor do darkMode na rota recebida é",route.query.darkModeIsActive);
-  isDark.value = route.query.darkModeIsActive === 'true';
-  console.log("O valor do darkMode no ref é",isDark.value);  
-}
-
 
 const elemetns = ref<{
   inicio: HTMLElement | null;
@@ -201,9 +191,9 @@ onload = (event) => {
       
       <div class="start-buttons">
         <Button id="registro-button" botao-texto="Registrar-se"
-          :route-botao="{ path: '/cadastrar-pessoa', query: { darkModeIsActive: isDark } }"></Button>
+          :route-botao="'/cadastrar-pessoa'"></Button>
         <Button id="acessar-button" botao-texto="Acessar Conta"
-          :route-botao="{ path: '/acessar-conta', query: { darkModeIsActive: isDark } }"></Button>
+          :route-botao="'/acessar-conta'"></Button>
       </div>
 
     </div>
