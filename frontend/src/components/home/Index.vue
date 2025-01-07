@@ -2,7 +2,18 @@
 import CardContent from './CardContent.vue';
 import Button from '../commons/CustomButton.vue';
 import { onMounted, ref, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 const isDark = ref(false);
+
+if(route.query.darkModeIsActive) {
+  console.log("A rota tem o darkMode");
+  console.log("O valor do darkMode na rota recebida é",route.query.darkModeIsActive);
+  isDark.value = route.query.darkModeIsActive === 'true';
+  console.log("O valor do darkMode no ref é",isDark.value);  
+}
+
 
 const elemetns = ref<{
   inicio: HTMLElement | null;
@@ -18,8 +29,7 @@ const elemetns = ref<{
 watchEffect(() => {
   // console.log("Tela no tamanho 1920px",window.matchMedia('(max-width: 1920px)'));
   // console.log("Tela no tamanho 1024px",window.matchMedia('(max-width: 1024px)'));
-
-
+  
   if (elemetns.value &&
     elemetns.value.inicio &&
     elemetns.value.cardContainer &&
@@ -165,6 +175,11 @@ onMounted(() => {
 
 });
 
+onload = (event) => {
+  event.preventDefault();
+  localStorage.clear();
+};
+
 </script>
 
 <template>
@@ -183,7 +198,7 @@ onMounted(() => {
 
       <CardContent ref="cardContainer" />
 
-
+      
       <div class="start-buttons">
         <Button id="registro-button" botao-texto="Registrar-se"
           :route-botao="{ path: '/cadastrar-pessoa', query: { darkModeIsActive: isDark } }"></Button>

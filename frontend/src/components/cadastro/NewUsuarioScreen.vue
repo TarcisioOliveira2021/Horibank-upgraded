@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const isDark = ref(route.query.darkModeIsActive === 'true');
+
 const elemetns = ref<
   {
     inicio: HTMLElement | null;
@@ -22,8 +23,6 @@ function getUiElements() {
   const subtext = document.getElementById('subtext');
   const buttons = document.getElementById('start-buttons')?.querySelectorAll('button');
   const inputsForm = document.getElementById('form-cadastro')?.querySelectorAll('div');
-
-
 
   return {
     inicio,
@@ -97,7 +96,7 @@ watchEffect(() => {
       </div>
       <h2 class="text" id="text">Cadastro</h2>
       <p class="subtext" id="subtext">Faça parte de uma nova transformação digital</p>
-      <Form></Form>
+      <Form :isDarkMode="isDark"></Form>
     </div>
   </div>
 </template>

@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import Button from '../commons/CustomButton.vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, watchEffect } from 'vue';
 import { vMaska } from 'maska/vue';
 import * as yup from 'yup';
-// import Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+let isDark = false;
+
+if(route.query.darkModeIsActive) {
+  isDark = route.query.darkModeIsActive === 'true';
+}
 
 const nuCPF = ref('');
 const dataNascimento = ref('');
 const showPassword = ref(false);
+let dataNascimentoFormatada = '';
+
+
 const CADASTRAR_ROUTE = import.meta.env.VITE_CADASTRAR_URL;
 
 const schema = yup.object({
@@ -18,6 +30,7 @@ const schema = yup.object({
     email: yup.string().email().required('O campo obrigatório'),
     numero_celular: yup.string().required('O campo obrigatório').matches(/^\(\d{2}\) 9 \d{4}-\d{4}$/),
     senha: yup.string().min(8).max(16).required('O campo obrigatório').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, um número e um caractere especial'),
+    
 }).required();
 
 const formatacaoDataNascimento = (dataNascimento: Date) => {
@@ -25,6 +38,7 @@ const formatacaoDataNascimento = (dataNascimento: Date) => {
     const mes = dataNascimento.getMonth() + 1;
     const ano = dataNascimento.getFullYear();
 
+    dataNascimentoFormatada = `${mes}/${dia}/${ano}`;
     return `${dia}/${mes}/${ano}`;
 }
 
@@ -46,36 +60,105 @@ onMounted(() => {
     divMain.style.flexDirection = 'column';
 });
 
-function onSubmitForm(values: any) {
-    console.log(values);
+function onSubmitForm(inputValues: any) {
+    console.log(isDark.toString());
 
+    // if (validarDataNascimento(dataNascimentoFormatada) && 
+    //     validarSenha(inputValues.senha, inputValues.usuario)) {
+    
+    //     inputValues.dataNascimento = dataNascimentoFormatada;
+            
+        
+    //     fetch(CADASTRAR_ROUTE, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(inputValues)
+    //     }).then(response => {
+    //         if (response.ok) {
+    //             response.json().then(resp => {
+    //                 Swal.fire({
+    //                     title: 'Cadastro realizado com sucesso',
+    //                     text: 'Seja bem-vindo(a) ao nosso sistema! 😊😊',
+    //                     icon: 'success',
+    //                     iconColor: '#42d392',
+    //                     confirmButtonText: 'Ok',
+    //                     confirmButtonColor: '#42d392',
+    //                 }).then(() => {
+                        
 
-    // fetch(CADASTRAR_ROUTE, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(values)
-    // }).then(response => {
-    //     console.log(response);
-    //     if (response.ok) {
-    //         response.json().then(resp => {
-    //             router.push({ path: '/conta-dashboard', query: { id: resp.id, token: resp.token } });
-    //         });
-    //     } else {
-    //         response.json().then(resp => {
-    //             Swal.fire({
-    //                 title: 'Falha no processamento',
-    //                 text: `${resp.message} 😭😭`,
-    //                 icon: 'error',
-    //                 iconColor: '#42d392',
-    //                 confirmButtonText: 'Ok',
-    //                 confirmButtonColor: '#42d392',
-    //             })
-    //         });
-    //     }
-    // });
+    //                     // router.push({path: '/acessar-conta', query: { darkModeIsActive: isDark.value } }); 
+    //                 });
+    //             });
+    //         } else {
+    //             response.json().then(resp => {
+    //                 Swal.fire({
+    //                     title: 'Falha no processamento',
+    //                     text: `${resp.message} 😭😭`,
+    //                     icon: 'error',
+    //                     iconColor: '#42d392',
+    //                     confirmButtonText: 'Ok',
+    //                     confirmButtonColor: '#42d392',
+    //                 })
+    //             });
+    //         }
+    //     });
+    // }
 }
+
+function validarDataNascimento(dataNascimento: string) {
+    const dataAtual = new Date();
+    const dataNascimentoInformadaFormatada = new Date(dataNascimento);
+    const diferencaAnos = dataAtual.getFullYear() - dataNascimentoInformadaFormatada.getFullYear();
+
+    if (diferencaAnos < 18) {
+        Swal.fire({
+            title: 'Data de nascimento inválida',
+            text: 'Você deve ter mais de 18 anos para se cadastrar 😭😭',
+            icon: 'error',
+            iconColor: '#42d392',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#42d392',
+        });
+
+        return false;
+    }
+
+    return true;
+}
+
+function validarCPF(nuCPF: string) {
+    const cpf = nuCPF.replace(/[^\d]+/g, '')
+    if (cpf.length !== 11 || !!cpf.match(/(\d)\1{10}/))
+        return false;
+
+    const cpfDigits = cpf.split("").map((el) => +el);
+    const rest = (count: number): number => {
+        return (((cpfDigits.slice(0, count - 12).reduce((soma, el, index) => soma + el * (count - index), 0) * 10) % 11) % 10);
+    };
+
+    return rest(10) === cpfDigits[9] && rest(11) === cpfDigits[10];
+}
+
+function validarSenha(senha: string, usuario:string) {
+    if(senha.match(usuario)) {
+        Swal.fire({
+            title: 'Senha inválida',
+            text: 'A senha não pode ser igual ao nome de usuário 😭😭',
+            icon: 'error',
+            iconColor: '#42d392',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#42d392',
+        });
+
+        return false;
+    }
+
+    return true;
+}
+
+
 </script>
 
 <template>
@@ -140,7 +223,7 @@ function onSubmitForm(values: any) {
             <VueDatePicker v-model="dataNascimento" auto-apply :format="formatacaoDataNascimento"
                 :enable-time-picker="false">
                 <template #dp-input="{ value }">
-                    <input type="text" class="input-date" :value="value" placeholder="Informe a data" required
+                    <input type="text" class="input-date" :value="value" placeholder="dd/mm/aa" required
                         readonly />
                 </template>
             </VueDatePicker>
@@ -272,7 +355,7 @@ function onSubmitForm(values: any) {
 
 
     /* dark mode */
-    .label-dark{
+    .label-dark {
         margin-top: 1rem;
         width: 200px;
         color: white;
