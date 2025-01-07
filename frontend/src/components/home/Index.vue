@@ -319,12 +319,22 @@ onMounted(() => {
 }
 
 @media (min-width: 100px) and (max-width: 1280px) {
+  .toogle{
+    display: none;
+  }
+
   .inicio{
     background-color: #42d392;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height: 100vh;
+    width: 100%;
   }
 
   .card-container {
     height: 100vh;
+    width: 100vh;
     overflow-y: scroll;
     display: block;
     background-color: #42d392;
@@ -334,12 +344,26 @@ onMounted(() => {
 
   .grettings-title {
     color: white;
+    font-size: 40px;
+    line-height: 1.25;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    font-family: var(--font-code);
+    text-align: left;
+    margin: 2rem 2rem 0rem 2rem;
   }
 
   .grettings-subtitle {
     background: -webkit-linear-gradient(317deg, #08864d 2%, #061147);
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-size: 40px;
+    line-height: 1.25;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    font-family: var(--font-code);
+    text-align: left;
+    margin: 0rem 2rem 2rem 2rem;
   }
 
   .start-buttons {

@@ -11,13 +11,8 @@ const elemetns = ref<
     cardContainer: HTMLElement | null;
     text: HTMLElement | null;
     subtext: HTMLElement | null;
-    // usuarioInput: HTMLElement | null;
-    // nomeCompletoInput: HTMLElement | null;
-    // cpfInput: HTMLElement | null;
-    // emailInput: HTMLElement | null;
-    // celularInput: HTMLElement | null;
-    // dataNascimentoInput: HTMLElement | null;
-    // passwordInput: HTMLElement | null;
+    buttons: NodeListOf<HTMLButtonElement> | undefined;
+    inputsForm: NodeListOf<HTMLDivElement> | undefined;
   } | null>(null);
 
 function getUiElements() {
@@ -25,26 +20,18 @@ function getUiElements() {
   const cardContainer = document.getElementById('card-container');
   const text = document.getElementById('text');
   const subtext = document.getElementById('subtext');
-  const usuarioInput = document.getElementById('usuario-field');
-  const passwordInput = document.getElementById('password-field');
   const buttons = document.getElementById('start-buttons')?.querySelectorAll('button');
+  const inputsForm = document.getElementById('form-cadastro')?.querySelectorAll('div');
 
-  const formCadastro = document.getElementById('form-cadastro');
-  formCadastro?.querySelectorAll('div').forEach((div) => {
-    div.querySelectorAll('label').forEach((label) => {
-      label.classList.add('label-dark');
-      label.classList.remove('label-dark');
-    });
-  });
+
 
   return {
     inicio,
     cardContainer,
     text,
     subtext,
-    usuarioInput,
-    passwordInput,
-    buttons
+    buttons,
+    inputsForm
   };
 }
 
@@ -70,6 +57,15 @@ watchEffect(() => {
     elemetns.value?.text?.classList.add('text-dark');
     elemetns.value?.subtext?.classList.remove('subtext');
     elemetns.value?.subtext?.classList.add('subtext-dark');
+    elemetns.value?.buttons?.forEach(button => {
+      button.classList.remove('btn');
+      button.classList.add('btn-dark');
+    });
+    elemetns.value?.inputsForm?.forEach(divInput => {
+      divInput.querySelectorAll('label').forEach(label => {
+        label.classList.add('label-dark');
+      })
+    });
   } else {
     elemetns.value?.inicio?.classList.remove('inicio-dark');
     elemetns.value?.inicio?.classList.add('inicio');
@@ -79,6 +75,15 @@ watchEffect(() => {
     elemetns.value?.text?.classList.add('text');
     elemetns.value?.subtext?.classList.remove('subtext-dark');
     elemetns.value?.subtext?.classList.add('subtext');
+    elemetns.value?.buttons?.forEach(button => {
+      button.classList.remove('btn-dark');
+      button.classList.add('btn');
+    });
+    elemetns.value?.inputsForm?.forEach(divInput => {
+      divInput.querySelectorAll('label').forEach(label => {
+        label.classList.remove('label-dark');
+      })
+    });
   }
 });
 

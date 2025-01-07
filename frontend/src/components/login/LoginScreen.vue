@@ -104,7 +104,7 @@ watchEffect(() => {
 </template>
 
 <style scoped>
-@media (max-width: 1920px) {
+@media (min-width: 1281px) and (max-width: 1920px) {
   .inicio {
     align-items: center;
     justify-content: center;
@@ -216,17 +216,44 @@ watchEffect(() => {
   }
 }
 
-@media (max-width: 1024px) {
+@media (min-width: 100px) and (max-width: 1280px) {
+  .toogle{
+    display: none;
+  }
+
+  .inicio{
+    background-color: #42d392;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height: 100vh;
+    width: 100%;
+  }
+
   .card-container {
+    place-items: center;
+    width: 90vh;
+    margin: 0 5px 0 5px;
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
     height: 100vh;
     overflow-y: scroll;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     background-color: #42d392;
     transition: 0.5s;
     box-shadow: none;
   }
 
   .text {
+    font-size: 40px;
+    line-height: 1.25;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    font-family: var(--font-code);
+    text-align: left;
+    margin: 2rem 2rem 0rem 2rem;
     background: -webkit-linear-gradient(317deg, #08864d 2%, #061147);
     background-clip: text;
     -webkit-text-fill-color: transparent;

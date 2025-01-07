@@ -64,7 +64,7 @@ function onSubmit(values: any) {
         </div>
         <ErrorMessage name="password"></ErrorMessage>
 
-        <div class="start-buttons">
+        <div class="start-buttons" id="start-buttons">
             <Button botaoTexto="Logar"></Button>
             <Button botaoTexto="Voltar" route-botao="/"></Button>
         </div>

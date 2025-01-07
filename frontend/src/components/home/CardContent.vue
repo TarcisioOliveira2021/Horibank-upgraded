@@ -27,7 +27,7 @@
 </template>
 
 <style scoped>
-@media (max-width: 1920px) {
+@media (min-width: 1281px) and (max-width: 1920px)  {
 
     .activities {
         display: flex;
@@ -102,9 +102,17 @@
     }
 }
 
-@media (max-width:1024px) {
+@media (min-width: 100px) and (max-width: 1280px) {
     .card {
         color: white;
+        margin: 12px;
+        padding: 20px;
+        border-radius: 15px;
+        background-color: rgba(212, 212, 212, 0.308);
+        transition: 0.5s;
+        align-content: center;
+        text-align: center;
+        cursor: not-allowed;
     }
 
     .card:hover {
@@ -117,6 +125,12 @@
 
     .card-content-title {
         color: white;
+        font-size: 30px;
+        font-weight: lighter;
+        letter-spacing: -1.5px;
+        font-family: var(--font-code);
+        text-align: center;
+        margin: 4rem 2rem 1rem 2rem;
     }
 }
 </style>
