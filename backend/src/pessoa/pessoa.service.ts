@@ -12,7 +12,7 @@ export class PessoaService {
 
     async cadastrarPessoa(pessoa: PessoaDTO){
         this.convertDataNascimento(pessoa);
-        await this.verificarUsuarioExistente(pessoa.usuario);
+        await this.verificarUsuarioCadastrado(pessoa.usuario);
         const senhaHas = await this.hashearSenha(pessoa.senha);
 
         return this.prismaService.pessoa.create(
@@ -39,18 +39,12 @@ export class PessoaService {
         return await bcrypt.hash(senha, salt);
     }
 
-    async verificarUsuarioExistente(usuario: string){
-        const usuarioRetornado = await this.prismaService.pessoa.findFirstOrThrow({
-            where: {
-                usuario: usuario
-            }
-        });
+    async verificarUsuarioCadastrado(usuario: string){
+        const usuarioRetornado = await this.getPessoa(usuario);
 
         if(usuarioRetornado != null){
-            return usuarioRetornado;
+            throw new BadRequestException('Usuário já cadastrado');
         }	
-
-        throw new BadRequestException('Usuário não encontrado');
     }
 
     async getPessoaId(pessoaId: string){ 
@@ -72,5 +66,13 @@ export class PessoaService {
             numero_celular: pessoa.numero_celular,
             contas: pessoa.contas
         }
+    }
+
+    async getPessoa(usuario: string){
+        return await this.prismaService.pessoa.findFirst({
+            where: {
+                usuario: usuario
+            }
+        });
     }
 }

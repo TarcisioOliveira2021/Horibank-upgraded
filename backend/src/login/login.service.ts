@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsuarioDTO } from './usuario_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
@@ -24,7 +24,11 @@ export class LoginService {
     }
  
     private async validarUsuarioSenha(usuario: UsuarioDTO) {
-        const usuarioFounded = await this.pessoaService.verificarUsuarioExistente(usuario.login);
+        const usuarioFounded = await this.pessoaService.getPessoa(usuario.login);
+
+        if(usuarioFounded == null){
+            throw new BadRequestException('Usuário não encontrado');
+        }
 
         if(await bcrypt.compare(usuario.password, usuarioFounded.senha)){
             return  usuarioFounded;
