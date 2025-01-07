@@ -17,9 +17,8 @@ const elemetns = ref<{
 } | null>(null);
 
 watchEffect(() => {
-  // console.log("Tela no tamanho 1920px",window.matchMedia('(max-width: 1920px)'));
-  // console.log("Tela no tamanho 1024px",window.matchMedia('(max-width: 1024px)'));
-  
+  localStorage.setItem('isDark', isDark.value.toString());
+
   if (elemetns.value &&
     elemetns.value.inicio &&
     elemetns.value.cardContainer &&
@@ -190,10 +189,8 @@ onload = (event) => {
 
       
       <div class="start-buttons">
-        <Button id="registro-button" botao-texto="Registrar-se"
-          :route-botao="'/cadastrar-pessoa'"></Button>
-        <Button id="acessar-button" botao-texto="Acessar Conta"
-          :route-botao="'/acessar-conta'"></Button>
+        <Button id="registro-button" botao-texto="Registrar-se" route-botao="/cadastrar-pessoa"></Button>
+        <Button id="acessar-button" botao-texto="Acessar Conta" route-botao="/acessar-conta"></Button>
       </div>
 
     </div>

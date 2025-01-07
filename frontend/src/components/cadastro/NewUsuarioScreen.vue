@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import Form from './NewUsuarioForm.vue';
 import { onMounted, ref, watchEffect } from 'vue';
-import { useRoute } from 'vue-router';
 
-const route = useRoute();
-const isDark = ref(route.query.darkModeIsActive === 'true');
+const isDark = ref(false);
+if(localStorage.getItem('isDark') === 'true') {
+  isDark.value = true;
+} else {
+  isDark.value = false;
+}
+
 
 const elemetns = ref<
   {
@@ -96,7 +100,7 @@ watchEffect(() => {
       </div>
       <h2 class="text" id="text">Cadastro</h2>
       <p class="subtext" id="subtext">Faça parte de uma nova transformação digital</p>
-      <Form :isDarkMode="isDark"></Form>
+      <Form></Form>
     </div>
   </div>
 </template>
@@ -128,7 +132,8 @@ watchEffect(() => {
 
   .card-container {
     place-items: center;
-    height: 80vh;
+    height: 95vh;
+    width: 95vh;
     box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
     border-radius: 15px;
     display: grid;
@@ -152,7 +157,7 @@ watchEffect(() => {
     background: -webkit-linear-gradient(317deg, #42d392 2%, #061147);
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-top: 80px;
+    margin-top: 60px;
   }
 
   .subtext {
@@ -161,7 +166,7 @@ watchEffect(() => {
     letter-spacing: -1.5px;
     font-family: var(--font-code);
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 10px;
   }
 
   
@@ -177,13 +182,12 @@ watchEffect(() => {
 
   .card-container-dark {
     place-items: center;
-    height: 80vh;
+    height: 95vh;
+    width: 95vh;
     border-radius: 15px;
     box-shadow: 20px 20px 50px rgba(65, 65, 65, 0.5);
     background-color: rgba(34, 29, 29, 0.6);
-    border-radius: 15px;
     display: grid;
-    flex-direction: column;
     transition: 0.5s;
     justify-content: center;
     align-items: center;
@@ -200,7 +204,7 @@ watchEffect(() => {
     font-family: var(--font-code);
     text-align: left;
     margin: 2rem 2rem 0rem 2rem;
-    margin-top: 80px;
+    margin-top: 60px;
     background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.6) 1%, rgba(146, 145, 145, 0.6));
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -213,7 +217,7 @@ watchEffect(() => {
     font-family: var(--font-code);
     text-align: center;
     color: white !important;
-    margin-bottom: 60px;
+    margin-bottom: 10px;
   }
 }
 

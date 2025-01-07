@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import Form from './LoginForm.vue';
 import { onMounted, ref, watchEffect } from 'vue';
-import { useRoute } from 'vue-router';
 
-const route = useRoute();
-const isDark = ref(route.query.darkModeIsActive === 'true');
+const isDark = ref(false);
+if(localStorage.getItem('isDark') === 'true') {
+  isDark.value = true;
+} else {
+  isDark.value = false;
+}
 
 const elemetns = ref<
   {
@@ -40,13 +43,13 @@ function getUiElements() {
 onMounted(() => {
   elemetns.value = getUiElements();
 
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    elemetns.value.inicio?.classList.remove('inicio');
-    elemetns.value.inicio?.classList.add('inicio-dark');
-  } else {
-    elemetns.value.inicio?.classList.remove('inicio-dark');
-    elemetns.value.inicio?.classList.add('inicio');
-  }
+  // if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  //   elemetns.value.inicio?.classList.remove('inicio');
+  //   elemetns.value.inicio?.classList.add('inicio-dark');
+  // } else {
+  //   elemetns.value.inicio?.classList.remove('inicio-dark');
+  //   elemetns.value.inicio?.classList.add('inicio');
+  // }
 });
 
 watchEffect(() => {
@@ -58,7 +61,8 @@ watchEffect(() => {
     elemetns.value.usuarioInput &&
     elemetns.value.passwordInput
   ) {
-    if (isDark.value) {
+
+  if (isDark.value) {
       elemetns.value.inicio.classList.remove('inicio');
       elemetns.value.inicio.classList.add('inicio-dark');
       elemetns.value.cardContainer.classList.remove('card-container');
@@ -71,8 +75,7 @@ watchEffect(() => {
         button.classList.remove('btn');
         button.classList.add('btn-dark');
       });
-
-    } else {
+  } else {
       elemetns.value.inicio.classList.remove('inicio-dark');
       elemetns.value.inicio.classList.add('inicio');
       elemetns.value.cardContainer.classList.remove('card-container-dark');

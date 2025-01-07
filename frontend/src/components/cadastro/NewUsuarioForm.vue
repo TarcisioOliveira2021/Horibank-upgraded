@@ -1,26 +1,15 @@
 <script setup lang="ts">
 import Button from '../commons/CustomButton.vue';
-import { Form, Field, ErrorMessage } from 'vee-validate';
-import { ref, watch, onMounted, watchEffect } from 'vue';
-import { vMaska } from 'maska/vue';
 import * as yup from 'yup';
 import Swal from 'sweetalert2';
-import { useRoute, useRouter } from 'vue-router';
-
-const route = useRoute();
-const router = useRouter();
-let isDark = false;
-
-if(route.query.darkModeIsActive) {
-  isDark = route.query.darkModeIsActive === 'true';
-}
+import { Form, Field } from 'vee-validate';
+import { ref, watch, onMounted} from 'vue';
+import { vMaska } from 'maska/vue';
 
 const nuCPF = ref('');
 const dataNascimento = ref('');
 const showPassword = ref(false);
 let dataNascimentoFormatada = '';
-
-
 const CADASTRAR_ROUTE = import.meta.env.VITE_CADASTRAR_URL;
 
 const schema = yup.object({
@@ -29,9 +18,9 @@ const schema = yup.object({
     nome_completo: yup.string().required('O campo obrigatório'),
     email: yup.string().email().required('O campo obrigatório'),
     numero_celular: yup.string().required('O campo obrigatório').matches(/^\(\d{2}\) 9 \d{4}-\d{4}$/),
-    senha: yup.string().min(8).max(16).required('O campo obrigatório').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, um número e um caractere especial'),
-    
-}).required();
+    senha: yup.string().min(8).max(16).required('O campo obrigatório').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, um número e um caractere especial')
+});
+
 
 const formatacaoDataNascimento = (dataNascimento: Date) => {
     const dia = dataNascimento.getDate();
@@ -61,7 +50,8 @@ onMounted(() => {
 });
 
 function onSubmitForm(inputValues: any) {
-    console.log(isDark.toString());
+    
+    console.log(inputValues);
 
     // if (validarDataNascimento(dataNascimentoFormatada) && 
     //     validarSenha(inputValues.senha, inputValues.usuario)) {
@@ -157,8 +147,6 @@ function validarSenha(senha: string, usuario:string) {
 
     return true;
 }
-
-
 </script>
 
 <template>
