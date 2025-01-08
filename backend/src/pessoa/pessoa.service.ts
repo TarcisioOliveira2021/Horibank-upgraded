@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { PessoaDTO } from './pessoa_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -15,7 +15,7 @@ export class PessoaService {
         await this.verificarUsuarioCadastrado(pessoa.usuario);
         const senhaHas = await this.hashearSenha(pessoa.senha);
 
-        return this.prismaService.pessoa.create(
+        await this.prismaService.pessoa.create(
             {      
                 data: {
                     nuCPF: pessoa.nuCPF,
@@ -26,7 +26,12 @@ export class PessoaService {
                     email: pessoa.email,
                     numero_celular: pessoa.numero_celular
                 }          
-            });
+        });
+
+        return {
+            statusCode: HttpStatus.CREATED,
+            message: 'Usuário cadastrado com sucesso'
+        };
     }
 
     private convertDataNascimento(pessoa: PessoaDTO){
