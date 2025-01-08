@@ -5,22 +5,23 @@ import Swal from 'sweetalert2';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import { ref, watch, onMounted} from 'vue';
 import { vMaska } from 'maska/vue';
+import { useRouter } from 'vue-router';
 
+let dataNascimentoFormatada = '';
 const nuCPF = ref('');
 const dataNascimento = ref('');
 const showPassword = ref(false);
-let dataNascimentoFormatada = '';
+const router = useRouter();
 const CADASTRAR_ROUTE = import.meta.env.VITE_CADASTRAR_URL;
 
 const schema = yup.object({
     nuCPF: yup.string().required('O campo obrigatório'),
-    usuario: yup.string().min(6).max(20).required('O campo obrigatório'),
+    usuario: yup.string().min(6,'O campo deve ter no mínimo 6 caracteres').max(12,'O campo deve ter no máximo 12 caracteres').required('O campo obrigatório'),
     nome_completo: yup.string().required('O campo obrigatório'),
     email: yup.string().email().required('O campo obrigatório'),
     numero_celular: yup.string().required('O campo obrigatório').matches(/^\(\d{2}\) 9 \d{4}-\d{4}$/),
-    senha: yup.string().min(8).max(16).required('O campo obrigatório').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, um número e um caractere especial')
+    senha: yup.string().min(8,'O campo deve ter no mínimo 8 caracteres').max(16,'O campo deve ter no máximo 16 caracteres').required('O campo obrigatório').matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial')
 });
-
 
 const formatacaoDataNascimento = (dataNascimento: Date) => {
     const dia = dataNascimento.getDate();
@@ -50,51 +51,43 @@ onMounted(() => {
 });
 
 function onSubmitForm(inputValues: any) {
-    
-    console.log(inputValues);
-
-    // if (validarDataNascimento(dataNascimentoFormatada) && 
-    //     validarSenha(inputValues.senha, inputValues.usuario)) {
-    
-    //     inputValues.dataNascimento = dataNascimentoFormatada;
+    if (validarDataNascimento(dataNascimentoFormatada) && validarSenha(inputValues.senha, inputValues.usuario)) {
+        inputValues.dataNascimento = dataNascimentoFormatada;
             
-        
-    //     fetch(CADASTRAR_ROUTE, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(inputValues)
-    //     }).then(response => {
-    //         if (response.ok) {
-    //             response.json().then(resp => {
-    //                 Swal.fire({
-    //                     title: 'Cadastro realizado com sucesso',
-    //                     text: 'Seja bem-vindo(a) ao nosso sistema! 😊😊',
-    //                     icon: 'success',
-    //                     iconColor: '#42d392',
-    //                     confirmButtonText: 'Ok',
-    //                     confirmButtonColor: '#42d392',
-    //                 }).then(() => {
-                        
-
-    //                     // router.push({path: '/acessar-conta', query: { darkModeIsActive: isDark.value } }); 
-    //                 });
-    //             });
-    //         } else {
-    //             response.json().then(resp => {
-    //                 Swal.fire({
-    //                     title: 'Falha no processamento',
-    //                     text: `${resp.message} 😭😭`,
-    //                     icon: 'error',
-    //                     iconColor: '#42d392',
-    //                     confirmButtonText: 'Ok',
-    //                     confirmButtonColor: '#42d392',
-    //                 })
-    //             });
-    //         }
-    //     });
-    // }
+        fetch(CADASTRAR_ROUTE, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(inputValues)
+        }).then(response => {
+            if (response.ok) {
+                response.json().then(resp => {
+                    Swal.fire({
+                        title: `${resp.message}`,
+                        text: 'Você será redirecionado para tela de login ao clickar no botão abaixo 😊',
+                        icon: 'success',
+                        iconColor: '#42d392',
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: '#42d392',
+                    }).then(() => {
+                        router.push('/acessar-conta'); 
+                    });
+                });
+            } else {
+                response.json().then(resp => {
+                    Swal.fire({
+                        title: 'Falha no processamento',
+                        text: `${resp.message} 😭😭`,
+                        icon: 'error',
+                        iconColor: '#42d392',
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: '#42d392',
+                    })
+                });
+            }
+        });
+    }
 }
 
 function validarDataNascimento(dataNascimento: string) {

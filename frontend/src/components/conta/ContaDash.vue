@@ -47,6 +47,12 @@ onBeforeMount(() => {
       <div class="top-container">
         <div class="top-container-content">
           <img src="https://picsum.photos/200/200?grayscale" alt="">
+          <v-avatar size="36px">
+              <v-img
+                alt="Avatar"
+                src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460"
+              ></v-img>
+            </v-avatar>
           <div class="top-container-text">
             <h1 class="grettings-text-h1">Bem vindo</h1>
             <h1 class="grettings-text">{{ pessoaName }}</h1>            
