@@ -26,66 +26,10 @@ watchEffect(() => {
 
 onMounted(() => {
   elemetns.value = getUiElements();
-
-  if(localStorage.getItem('isDark') === 'true'){
-    isDark.value = true;
-  } else {
-    isDark.value = false;
+  getLocalStorageIsDark();
+  if(elemetns.value){ 
+    setTheme(elemetns.value);
   }
-
-
-  // if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  //   elemetns.value.inicio?.classList.remove('inicio');
-  //   elemetns.value.inicio?.classList.add('inicio-dark');
-  //   elemetns.value.cardContainer?.classList.remove('card-container');
-  //   elemetns.value.cardContainer?.classList.add('card-container-dark');
-
-  //   elemetns.value.grettingsTitle?.classList.remove('grettings-title');
-  //   elemetns.value.grettingsTitle?.classList.add('grettings-title-dark');
-  //   elemetns.value.grettingsSubtitle?.classList.remove('grettings-subtitle');
-  //   elemetns.value.grettingsSubtitle?.classList.add('grettings-subtitle-dark');
-
-  //   elemetns.value.cardContentTitle?.classList.remove('card-content-title');
-  //   elemetns.value.cardContentTitle?.classList.add('card-content-title-dark');
-
-  //   elemetns.value.activities?.forEach(activity => {
-  //     activity.classList.remove('card');
-  //     activity.classList.add('card-dark');
-  //   });
-
-  //   elemetns.value.btnRegistro?.classList.remove('btn');
-  //   elemetns.value.btnRegistro?.classList.add('btn-dark');
-  //   elemetns.value.btnAcessar?.classList.remove('btn');
-  //   elemetns.value.btnAcessar?.classList.add('btn-dark');
-
-  // } else {
-  //   elemetns.value.inicio?.classList.remove('inicio-dark');
-  //   elemetns.value.inicio?.classList.add('inicio');
-  //   elemetns.value.inicio?.classList.remove('inicio-dark');
-  //   elemetns.value.inicio?.classList.add('inicio');
-
-  //   elemetns.value.cardContainer?.classList.remove('card-container-dark');
-  //   elemetns.value.cardContainer?.classList.add('card-container');
-
-  //   elemetns.value.grettingsTitle?.classList.remove('grettings-title-dark');
-  //   elemetns.value.grettingsTitle?.classList.add('grettings-title');
-  //   elemetns.value.grettingsSubtitle?.classList.remove('grettings-subtitle-dark');
-  //   elemetns.value.grettingsSubtitle?.classList.add('grettings-subtitle');
-
-  //   elemetns.value.cardContentTitle?.classList.remove('card-content-title-dark');
-  //   elemetns.value.cardContentTitle?.classList.add('card-content-title');
-
-  //   elemetns.value.activities?.forEach(activity => {
-  //     activity.classList.remove('card-dark');
-  //     activity.classList.add('card');
-  //   });
-
-  //   elemetns.value.btnRegistro?.classList.remove('btn-dark');
-  //   elemetns.value.btnRegistro?.classList.add('btn');
-  //   elemetns.value.btnAcessar?.classList.remove('btn-dark');
-  //   elemetns.value.btnAcessar?.classList.add('btn');
-  // }
-
 });
 
 onload = (event) => {
@@ -100,7 +44,8 @@ function toogleTheme(elemento: HTMLElement | HTMLButtonElement, themeAdicionar: 
 }
 
 function setTheme(elemetns: any) {
-  if (isDark.value) {
+  if (isDark.value || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      isDark.value = true; //Redundante mas aplicavel caso o window.matchMedia seja dark para o toogle ficar selecionado.
       toogleTheme(elemetns.inicio, 'inicio-dark', 'inicio');
       toogleTheme(elemetns.cardContainer, 'card-container-dark', 'card-container');
       toogleTheme(elemetns.grettingsTitle, 'grettings-title-dark', 'grettings-title');
@@ -152,6 +97,14 @@ function getUiElements() {
     cards,
     buttons
   };
+}
+
+function getLocalStorageIsDark() {
+  if (localStorage.getItem('isDark') === 'true') {
+    isDark.value = true;
+  } else {
+    isDark.value = false;
+  }
 }
 </script>
 

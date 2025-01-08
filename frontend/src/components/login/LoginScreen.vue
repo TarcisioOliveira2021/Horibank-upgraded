@@ -3,12 +3,6 @@ import Form from './LoginForm.vue';
 import { onMounted, ref, watchEffect } from 'vue';
 
 const isDark = ref(false);
-if (localStorage.getItem('isDark') === 'true') {
-  isDark.value = true;
-} else {
-  isDark.value = false;
-}
-
 const elements = ref<
   {
     inicio: HTMLElement | null;
@@ -19,6 +13,26 @@ const elements = ref<
     passwordInput: HTMLElement | null;
     buttons: NodeListOf<HTMLButtonElement> | undefined;
   } | null>(null);
+
+onMounted(() => {
+  elements.value = getUiElements();
+  getLocalStorageIsDark();
+
+  if(elements.value) {
+    setTheme(elements.value);
+  }
+});
+
+watchEffect(() => {
+  if (elements.value) {
+    setTheme(elements.value);
+  }
+});
+
+onload = (event) => {
+  event.preventDefault();
+  localStorage.clear();
+};
 
 function getUiElements() {
   const inicio = document.getElementById('inicio');
@@ -40,37 +54,15 @@ function getUiElements() {
   };
 }
 
-onMounted(() => {
-  elements.value = getUiElements();
-
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    localStorage.setItem('isDark', 'true');
-
-    elements.value.inicio?.classList.remove('inicio');
-    elements.value.inicio?.classList.add('inicio-dark');
-    elements.value.cardContainer?.classList.remove('card-container');
-
-  } else {
-    localStorage.setItem('isDark', 'false');
-
-    elements.value.inicio?.classList.remove('inicio-dark');
-    elements.value.inicio?.classList.add('inicio');
-  }
-});
-
-watchEffect(() => {
-  if (elements.value) {
-    setTheme(elements.value);
-  }
-});
-
 function toogleTheme(elemento: HTMLElement | HTMLButtonElement, themeAdicionar: string, themeRemover: string) {
   elemento.classList.remove(themeRemover);
   elemento.classList.add(themeAdicionar);
 }
 
 function setTheme(elements: any) {
-  if (isDark.value) {
+  if (isDark.value || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    localStorage.setItem('isDark', 'true');
+
     toogleTheme(elements.inicio, 'inicio-dark', 'inicio');
     toogleTheme(elements.cardContainer, 'card-container-dark', 'card-container');
     toogleTheme(elements.text, 'text-dark', 'text');
@@ -91,12 +83,13 @@ function setTheme(elements: any) {
   }
 }
 
-onload = (event) => {
-  event.preventDefault();
-  localStorage.clear();
-};
-
-
+function getLocalStorageIsDark() {
+  if (localStorage.getItem('isDark') === 'true') {
+    isDark.value = true;
+  } else {
+    isDark.value = false;
+  }
+}
 </script>
 
 <template>
