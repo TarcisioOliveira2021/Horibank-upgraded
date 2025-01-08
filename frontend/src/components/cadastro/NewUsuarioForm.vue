@@ -2,7 +2,7 @@
 import Button from '../commons/CustomButton.vue';
 import * as yup from 'yup';
 import Swal from 'sweetalert2';
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import { ref, watch, onMounted} from 'vue';
 import { vMaska } from 'maska/vue';
 
@@ -231,7 +231,7 @@ function validarSenha(senha: string, usuario:string) {
         display: grid;
         justify-items: center;
         grid-template-columns: repeat(2, 1fr);
-        margin: 1rem 1rem 5rem 1rem;
+        margin: 1rem 1rem 1rem 1rem;
     }
 
     .toggle-password {
@@ -322,7 +322,7 @@ function validarSenha(senha: string, usuario:string) {
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin: 2rem 1rem 2rem 1rem;
+        margin: 2rem 1rem 4rem 1rem;
         grid-column: span 2;
         justify-content: center;
         gap: 1rem;

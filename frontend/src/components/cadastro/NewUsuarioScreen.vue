@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import Form from './NewUsuarioForm.vue';
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect, watch } from 'vue';
 
 const isDark = ref(false);
-if(localStorage.getItem('isDark') === 'true') {
-  isDark.value = true;
-} else {
-  isDark.value = false;
-}
 
-
-const elemetns = ref<
+const elements = ref<
   {
     inicio: HTMLElement | null;
     cardContainer: HTMLElement | null;
@@ -38,57 +32,78 @@ function getUiElements() {
   };
 }
 
+watch(() => isDark.value, (value) => {
+  localStorage.setItem('isDark', value.toString());
+});
+
 onMounted(() => {
-  elemetns.value = getUiElements();
+  elements.value = getUiElements();
+  getLocalStorageIsDark();
 
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    elemetns.value.inicio?.classList.remove('inicio');
-    elemetns.value.inicio?.classList.add('inicio-dark');
+    elements.value.inicio?.classList.remove('inicio');
+    elements.value.inicio?.classList.add('inicio-dark');
   } else {
-    elemetns.value.inicio?.classList.remove('inicio-dark');
-    elemetns.value.inicio?.classList.add('inicio');
+    elements.value.inicio?.classList.remove('inicio-dark');
+    elements.value.inicio?.classList.add('inicio');
   }
 });
 
 watchEffect(() => {
-  if(isDark.value) {
-    elemetns.value?.inicio?.classList.remove('inicio');
-    elemetns.value?.inicio?.classList.add('inicio-dark');
-    elemetns.value?.cardContainer?.classList.remove('card-container');
-    elemetns.value?.cardContainer?.classList.add('card-container-dark');
-    elemetns.value?.text?.classList.remove('text');
-    elemetns.value?.text?.classList.add('text-dark');
-    elemetns.value?.subtext?.classList.remove('subtext');
-    elemetns.value?.subtext?.classList.add('subtext-dark');
-    elemetns.value?.buttons?.forEach(button => {
-      button.classList.remove('btn');
-      button.classList.add('btn-dark');
+  if (elements.value) {
+    setTheme(elements.value);
+  }
+});
+
+onload = (event) => {
+  event.preventDefault();
+  localStorage.clear();
+};
+
+function toogleTheme(elemento: HTMLElement | HTMLButtonElement, themeAdicionar: string, themeRemover: string) {
+  elemento.classList.remove(themeRemover);
+  elemento.classList.add(themeAdicionar);
+}
+
+function setTheme(elements: any) {
+  if (isDark.value) {
+    toogleTheme(elements.inicio, 'inicio-dark', 'inicio');
+    toogleTheme(elements.cardContainer, 'card-container-dark', 'card-container');
+    toogleTheme(elements.text, 'text-dark', 'text');
+    toogleTheme(elements.subtext, 'subtext-dark', 'subtext');
+    elements.buttons?.forEach((button: HTMLButtonElement) => {
+      toogleTheme(button, 'btn-dark', 'btn');
     });
-    elemetns.value?.inputsForm?.forEach(divInput => {
-      divInput.querySelectorAll('label').forEach(label => {
+    elements.inputsForm?.forEach((divInput: HTMLDivElement) => {
+      divInput.querySelectorAll('label').forEach((label: HTMLLabelElement) => {
         label.classList.add('label-dark');
       })
     });
   } else {
-    elemetns.value?.inicio?.classList.remove('inicio-dark');
-    elemetns.value?.inicio?.classList.add('inicio');
-    elemetns.value?.cardContainer?.classList.remove('card-container-dark');
-    elemetns.value?.cardContainer?.classList.add('card-container');
-    elemetns.value?.text?.classList.remove('text-dark');
-    elemetns.value?.text?.classList.add('text');
-    elemetns.value?.subtext?.classList.remove('subtext-dark');
-    elemetns.value?.subtext?.classList.add('subtext');
-    elemetns.value?.buttons?.forEach(button => {
-      button.classList.remove('btn-dark');
-      button.classList.add('btn');
+    toogleTheme(elements.inicio, 'inicio', 'inicio-dark');
+    toogleTheme(elements.cardContainer, 'card-container', 'card-container-dark');
+    toogleTheme(elements.text, 'text', 'text-dark');
+    toogleTheme(elements.subtext, 'subtext', 'subtext-dark');
+
+
+    elements.buttons?.forEach((button: HTMLButtonElement) => {
+      toogleTheme(button, 'btn', 'btn-dark');
     });
-    elemetns.value?.inputsForm?.forEach(divInput => {
-      divInput.querySelectorAll('label').forEach(label => {
+    elements.inputsForm?.forEach((divInput: HTMLDivElement) => {
+      divInput.querySelectorAll('label').forEach((label: HTMLLabelElement) => {
         label.classList.remove('label-dark');
       })
     });
   }
-});
+}
+
+function getLocalStorageIsDark() {
+  if (localStorage.getItem('isDark') === 'true') {
+    isDark.value = true;
+  } else {
+    isDark.value = false;
+  }
+}
 
 </script>
 
@@ -98,8 +113,10 @@ watchEffect(() => {
       <div class="header" id="header">
         <v-switch class="toogle" v-model="isDark" inset color="#42d392"></v-switch>
       </div>
-      <h2 class="text" id="text">Cadastro</h2>
-      <p class="subtext" id="subtext">Faça parte de uma nova transformação digital</p>
+      <div class="text-subtext-container" id="text-subtext-container">
+        <h2 class="text" id="text">Cadastro</h2>
+        <p class="subtext" id="subtext">Faça parte de uma nova transformação digital 😎</p>
+      </div>
       <Form></Form>
     </div>
   </div>
@@ -132,7 +149,7 @@ watchEffect(() => {
 
   .card-container {
     place-items: center;
-    height: 95vh;
+    height: auto;
     width: 95vh;
     box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
     border-radius: 15px;
@@ -146,6 +163,13 @@ watchEffect(() => {
     margin: 1rem 2rem 1rem 2rem;
   }
 
+  .text-subtext-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 3rem 1rem 3rem 1rem;
+  }
+
   .text {
     width: auto;
     font-size: 40px;
@@ -157,7 +181,6 @@ watchEffect(() => {
     background: -webkit-linear-gradient(317deg, #42d392 2%, #061147);
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-top: 60px;
   }
 
   .subtext {
@@ -166,10 +189,9 @@ watchEffect(() => {
     letter-spacing: -1.5px;
     font-family: var(--font-code);
     text-align: center;
-    margin-bottom: 10px;
   }
 
-  
+
   /* DarkMode */
   .inicio-dark {
     align-items: center;
@@ -182,7 +204,7 @@ watchEffect(() => {
 
   .card-container-dark {
     place-items: center;
-    height: 95vh;
+    height: auto;
     width: 95vh;
     border-radius: 15px;
     box-shadow: 20px 20px 50px rgba(65, 65, 65, 0.5);
@@ -203,21 +225,18 @@ watchEffect(() => {
     letter-spacing: -1.5px;
     font-family: var(--font-code);
     text-align: left;
-    margin: 2rem 2rem 0rem 2rem;
-    margin-top: 60px;
     background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.6) 1%, rgba(146, 145, 145, 0.6));
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  .subtext-dark {    
+  .subtext-dark {
     font-size: 18px;
     font-weight: lighter;
     letter-spacing: -1.5px;
     font-family: var(--font-code);
     text-align: center;
     color: white !important;
-    margin-bottom: 10px;
   }
 }
 

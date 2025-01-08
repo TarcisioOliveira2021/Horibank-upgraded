@@ -3,13 +3,13 @@ import Form from './LoginForm.vue';
 import { onMounted, ref, watchEffect } from 'vue';
 
 const isDark = ref(false);
-if(localStorage.getItem('isDark') === 'true') {
+if (localStorage.getItem('isDark') === 'true') {
   isDark.value = true;
 } else {
   isDark.value = false;
 }
 
-const elemetns = ref<
+const elements = ref<
   {
     inicio: HTMLElement | null;
     cardContainer: HTMLElement | null;
@@ -41,56 +41,62 @@ function getUiElements() {
 }
 
 onMounted(() => {
-  elemetns.value = getUiElements();
+  elements.value = getUiElements();
 
-  // if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  //   elemetns.value.inicio?.classList.remove('inicio');
-  //   elemetns.value.inicio?.classList.add('inicio-dark');
-  // } else {
-  //   elemetns.value.inicio?.classList.remove('inicio-dark');
-  //   elemetns.value.inicio?.classList.add('inicio');
-  // }
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    localStorage.setItem('isDark', 'true');
+
+    elements.value.inicio?.classList.remove('inicio');
+    elements.value.inicio?.classList.add('inicio-dark');
+    elements.value.cardContainer?.classList.remove('card-container');
+
+  } else {
+    localStorage.setItem('isDark', 'false');
+
+    elements.value.inicio?.classList.remove('inicio-dark');
+    elements.value.inicio?.classList.add('inicio');
+  }
 });
 
 watchEffect(() => {
-  if (elemetns.value &&
-    elemetns.value.inicio &&
-    elemetns.value.cardContainer &&
-    elemetns.value.text &&
-    elemetns.value.subtext &&
-    elemetns.value.usuarioInput &&
-    elemetns.value.passwordInput
-  ) {
-
-  if (isDark.value) {
-      elemetns.value.inicio.classList.remove('inicio');
-      elemetns.value.inicio.classList.add('inicio-dark');
-      elemetns.value.cardContainer.classList.remove('card-container');
-      elemetns.value.cardContainer.classList.add('card-container-dark');
-      elemetns.value.text.classList.remove('text');
-      elemetns.value.text.classList.add('text-dark');
-      elemetns.value.subtext.classList.remove('subtext');
-      elemetns.value.subtext.classList.add('subtext-dark');
-      elemetns.value.buttons?.forEach((button) => {
-        button.classList.remove('btn');
-        button.classList.add('btn-dark');
-      });
-  } else {
-      elemetns.value.inicio.classList.remove('inicio-dark');
-      elemetns.value.inicio.classList.add('inicio');
-      elemetns.value.cardContainer.classList.remove('card-container-dark');
-      elemetns.value.cardContainer.classList.add('card-container');
-      elemetns.value.text.classList.remove('text-dark');
-      elemetns.value.text.classList.add('text');
-      elemetns.value.subtext.classList.remove('subtext-dark');
-      elemetns.value.subtext.classList.add('subtext');
-      elemetns.value.buttons?.forEach((button) => {
-        button.classList.remove('btn-dark');
-        button.classList.add('btn');
-      });
-    }
+  if (elements.value) {
+    setTheme(elements.value);
   }
 });
+
+function toogleTheme(elemento: HTMLElement | HTMLButtonElement, themeAdicionar: string, themeRemover: string) {
+  elemento.classList.remove(themeRemover);
+  elemento.classList.add(themeAdicionar);
+}
+
+function setTheme(elements: any) {
+  if (isDark.value) {
+    toogleTheme(elements.inicio, 'inicio-dark', 'inicio');
+    toogleTheme(elements.cardContainer, 'card-container-dark', 'card-container');
+    toogleTheme(elements.text, 'text-dark', 'text');
+    toogleTheme(elements.subtext, 'subtext-dark', 'subtext');
+    elements.buttons?.forEach((button: HTMLButtonElement) => {
+      toogleTheme(button, 'btn-dark', 'btn');
+    });
+
+  } else {
+    toogleTheme(elements.inicio, 'inicio', 'inicio-dark');
+    toogleTheme(elements.cardContainer, 'card-container', 'card-container-dark');
+    toogleTheme(elements.text, 'text', 'text-dark');
+    toogleTheme(elements.subtext, 'subtext', 'subtext-dark');
+    elements.buttons?.forEach((button: HTMLButtonElement) => {
+      toogleTheme(button, 'btn', 'btn-dark');
+    });
+
+  }
+}
+
+onload = (event) => {
+  event.preventDefault();
+  localStorage.clear();
+};
+
+
 </script>
 
 <template>
@@ -220,11 +226,11 @@ watchEffect(() => {
 }
 
 @media (min-width: 100px) and (max-width: 1280px) {
-  .toogle{
+  .toogle {
     display: none;
   }
 
-  .inicio{
+  .inicio {
     background-color: #42d392;
     align-items: center;
     justify-content: center;

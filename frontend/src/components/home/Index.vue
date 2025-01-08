@@ -1,88 +1,137 @@
 <script setup lang="ts">
 import CardContent from './CardContent.vue';
 import Button from '../commons/CustomButton.vue';
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect, watch } from 'vue';
 
 const isDark = ref(false);
-
 const elemetns = ref<{
   inicio: HTMLElement | null;
   cardContainer: HTMLElement | null;
   grettingsTitle: HTMLElement | null;
   grettingsSubtitle: HTMLElement | null;
   cardContentTitle: HTMLElement | null;
-  activities: NodeListOf<HTMLDivElement> | undefined;
-  btnRegistro: HTMLElement | null;
-  btnAcessar: HTMLElement | null;
-} | null>(null);
-
+  cards: NodeListOf<HTMLDivElement> | undefined;
+  buttons: NodeListOf<HTMLButtonElement> | undefined;
+  } | null>(null);
+  
+watch(() => isDark.value, (value) => {
+    localStorage.setItem('isDark', value.toString());
+  });
+  
 watchEffect(() => {
-  localStorage.setItem('isDark', isDark.value.toString());
-
-  if (elemetns.value &&
-    elemetns.value.inicio &&
-    elemetns.value.cardContainer &&
-    elemetns.value.grettingsTitle &&
-    elemetns.value.grettingsSubtitle &&
-    elemetns.value.cardContentTitle &&
-    elemetns.value.activities &&
-    elemetns.value.btnAcessar &&
-    elemetns.value.btnRegistro
-  ) {
-    if (isDark.value) {
-      elemetns.value.inicio.classList.remove('inicio');
-      elemetns.value.inicio.classList.add('inicio-dark');
-
-      elemetns.value.cardContainer.classList.remove('card-container');
-      elemetns.value.cardContainer.classList.add('card-container-dark');
-
-      elemetns.value.grettingsTitle.classList.remove('grettings-title');
-      elemetns.value.grettingsTitle.classList.add('grettings-title-dark');
-      elemetns.value.grettingsSubtitle.classList.remove('grettings-subtitle');
-      elemetns.value.grettingsSubtitle.classList.add('grettings-subtitle-dark');
-
-      elemetns.value.cardContentTitle.classList.remove('card-content-title');
-      elemetns.value.cardContentTitle.classList.add('card-content-title-dark');
-
-      elemetns.value.activities.forEach(activity => {
-        activity.classList.remove('card');
-        activity.classList.add('card-dark');
-      });
-
-      elemetns.value.btnRegistro.classList.remove('btn');
-      elemetns.value.btnRegistro.classList.add('btn-dark');
-      elemetns.value.btnAcessar.classList.remove('btn');
-      elemetns.value.btnAcessar.classList.add('btn-dark');
-
-
-    } else {
-      elemetns.value.inicio.classList.remove('inicio-dark');
-      elemetns.value.inicio.classList.add('inicio');
-
-      elemetns.value.cardContainer.classList.remove('card-container-dark');
-      elemetns.value.cardContainer?.classList.add('card-container');
-
-      elemetns.value.grettingsTitle.classList.remove('grettings-title-dark');
-      elemetns.value.grettingsTitle.classList.add('grettings-title');
-      elemetns.value.grettingsSubtitle.classList.remove('grettings-subtitle-dark');
-      elemetns.value.grettingsSubtitle.classList.add('grettings-subtitle');
-
-      elemetns.value.cardContentTitle.classList.remove('card-content-title-dark');
-      elemetns.value.cardContentTitle.classList.add('card-content-title');
-
-      elemetns.value.activities.forEach(activity => {
-        activity.classList.remove('card-dark');
-        activity.classList.add('card');
-      });
-
-      elemetns.value.btnRegistro.classList.remove('btn-dark');
-      elemetns.value.btnRegistro.classList.add('btn');
-      elemetns.value.btnAcessar.classList.remove('btn-dark');
-      elemetns.value.btnAcessar.classList.add('btn');
-    }
+  if(elemetns.value){
+    setTheme(elemetns.value);
   }
 });
 
+onMounted(() => {
+  elemetns.value = getUiElements();
+
+  if(localStorage.getItem('isDark') === 'true'){
+    isDark.value = true;
+  } else {
+    isDark.value = false;
+  }
+
+
+  // if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  //   elemetns.value.inicio?.classList.remove('inicio');
+  //   elemetns.value.inicio?.classList.add('inicio-dark');
+  //   elemetns.value.cardContainer?.classList.remove('card-container');
+  //   elemetns.value.cardContainer?.classList.add('card-container-dark');
+
+  //   elemetns.value.grettingsTitle?.classList.remove('grettings-title');
+  //   elemetns.value.grettingsTitle?.classList.add('grettings-title-dark');
+  //   elemetns.value.grettingsSubtitle?.classList.remove('grettings-subtitle');
+  //   elemetns.value.grettingsSubtitle?.classList.add('grettings-subtitle-dark');
+
+  //   elemetns.value.cardContentTitle?.classList.remove('card-content-title');
+  //   elemetns.value.cardContentTitle?.classList.add('card-content-title-dark');
+
+  //   elemetns.value.activities?.forEach(activity => {
+  //     activity.classList.remove('card');
+  //     activity.classList.add('card-dark');
+  //   });
+
+  //   elemetns.value.btnRegistro?.classList.remove('btn');
+  //   elemetns.value.btnRegistro?.classList.add('btn-dark');
+  //   elemetns.value.btnAcessar?.classList.remove('btn');
+  //   elemetns.value.btnAcessar?.classList.add('btn-dark');
+
+  // } else {
+  //   elemetns.value.inicio?.classList.remove('inicio-dark');
+  //   elemetns.value.inicio?.classList.add('inicio');
+  //   elemetns.value.inicio?.classList.remove('inicio-dark');
+  //   elemetns.value.inicio?.classList.add('inicio');
+
+  //   elemetns.value.cardContainer?.classList.remove('card-container-dark');
+  //   elemetns.value.cardContainer?.classList.add('card-container');
+
+  //   elemetns.value.grettingsTitle?.classList.remove('grettings-title-dark');
+  //   elemetns.value.grettingsTitle?.classList.add('grettings-title');
+  //   elemetns.value.grettingsSubtitle?.classList.remove('grettings-subtitle-dark');
+  //   elemetns.value.grettingsSubtitle?.classList.add('grettings-subtitle');
+
+  //   elemetns.value.cardContentTitle?.classList.remove('card-content-title-dark');
+  //   elemetns.value.cardContentTitle?.classList.add('card-content-title');
+
+  //   elemetns.value.activities?.forEach(activity => {
+  //     activity.classList.remove('card-dark');
+  //     activity.classList.add('card');
+  //   });
+
+  //   elemetns.value.btnRegistro?.classList.remove('btn-dark');
+  //   elemetns.value.btnRegistro?.classList.add('btn');
+  //   elemetns.value.btnAcessar?.classList.remove('btn-dark');
+  //   elemetns.value.btnAcessar?.classList.add('btn');
+  // }
+
+});
+
+onload = (event) => {
+  event.preventDefault();
+  isDark.value = false;
+  localStorage.clear();
+};
+
+function toogleTheme(elemento: HTMLElement | HTMLButtonElement, themeAdicionar: string, themeRemover: string) {
+  elemento.classList.remove(themeRemover);
+  elemento.classList.add(themeAdicionar);
+}
+
+function setTheme(elemetns: any) {
+  if (isDark.value) {
+      toogleTheme(elemetns.inicio, 'inicio-dark', 'inicio');
+      toogleTheme(elemetns.cardContainer, 'card-container-dark', 'card-container');
+      toogleTheme(elemetns.grettingsTitle, 'grettings-title-dark', 'grettings-title');
+      toogleTheme(elemetns.grettingsSubtitle, 'grettings-subtitle-dark', 'grettings-subtitle');
+      toogleTheme(elemetns.cardContentTitle, 'card-content-title-dark', 'card-content-title');
+
+      
+      elemetns.cards?.forEach((card: HTMLDivElement) => {
+        toogleTheme(card, 'card-dark', 'card');
+      });
+
+      elemetns.buttons?.forEach((button: HTMLButtonElement) => {
+        toogleTheme(button, 'btn-dark', 'btn');
+      });
+
+    } else {
+      toogleTheme(elemetns.inicio, 'inicio', 'inicio-dark');
+      toogleTheme(elemetns.cardContainer, 'card-container', 'card-container-dark');
+      toogleTheme(elemetns.grettingsTitle, 'grettings-title', 'grettings-title-dark');
+      toogleTheme(elemetns.grettingsSubtitle, 'grettings-subtitle', 'grettings-subtitle-dark');
+      toogleTheme(elemetns.cardContentTitle, 'card-content-title', 'card-content-title-dark');
+      
+      elemetns.cards.forEach((card: HTMLDivElement) => {
+        toogleTheme(card, 'card', 'card-dark');
+      });
+
+      elemetns.buttons?.forEach((button: HTMLButtonElement) => {
+        toogleTheme(button, 'btn', 'btn-dark');
+      });
+    }
+}
 
 function getUiElements() {
   const inicio = document.getElementById('inicio');
@@ -91,9 +140,8 @@ function getUiElements() {
   const grettingsSubtitle = document.getElementById('grettings-subtitle');
   const cardContentTitle = document.getElementById('card-content-title');
 
-  const activities = document.getElementById('activities')?.querySelectorAll('div');
-  const btnRegistro = document.getElementById('registro-button');
-  const btnAcessar = document.getElementById('acessar-button');
+  const cards = document.getElementById('activities')?.querySelectorAll('div');
+  const buttons = document.getElementById('start-buttons')?.querySelectorAll('button');
 
   return {
     inicio,
@@ -101,74 +149,10 @@ function getUiElements() {
     grettingsTitle,
     grettingsSubtitle,
     cardContentTitle,
-    activities,
-    btnRegistro,
-    btnAcessar
+    cards,
+    buttons
   };
 }
-
-onMounted(() => {
-  elemetns.value = getUiElements();
-
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    elemetns.value.inicio?.classList.remove('inicio');
-    elemetns.value.inicio?.classList.add('inicio-dark');
-    elemetns.value.cardContainer?.classList.remove('card-container');
-    elemetns.value.cardContainer?.classList.add('card-container-dark');
-
-    elemetns.value.grettingsTitle?.classList.remove('grettings-title');
-    elemetns.value.grettingsTitle?.classList.add('grettings-title-dark');
-    elemetns.value.grettingsSubtitle?.classList.remove('grettings-subtitle');
-    elemetns.value.grettingsSubtitle?.classList.add('grettings-subtitle-dark');
-
-    elemetns.value.cardContentTitle?.classList.remove('card-content-title');
-    elemetns.value.cardContentTitle?.classList.add('card-content-title-dark');
-
-    elemetns.value.activities?.forEach(activity => {
-      activity.classList.remove('card');
-      activity.classList.add('card-dark');
-    });
-
-    elemetns.value.btnRegistro?.classList.remove('btn');
-    elemetns.value.btnRegistro?.classList.add('btn-dark');
-    elemetns.value.btnAcessar?.classList.remove('btn');
-    elemetns.value.btnAcessar?.classList.add('btn-dark');
-
-  } else {
-    elemetns.value.inicio?.classList.remove('inicio-dark');
-    elemetns.value.inicio?.classList.add('inicio');
-    elemetns.value.inicio?.classList.remove('inicio-dark');
-    elemetns.value.inicio?.classList.add('inicio');
-
-    elemetns.value.cardContainer?.classList.remove('card-container-dark');
-    elemetns.value.cardContainer?.classList.add('card-container');
-
-    elemetns.value.grettingsTitle?.classList.remove('grettings-title-dark');
-    elemetns.value.grettingsTitle?.classList.add('grettings-title');
-    elemetns.value.grettingsSubtitle?.classList.remove('grettings-subtitle-dark');
-    elemetns.value.grettingsSubtitle?.classList.add('grettings-subtitle');
-
-    elemetns.value.cardContentTitle?.classList.remove('card-content-title-dark');
-    elemetns.value.cardContentTitle?.classList.add('card-content-title');
-
-    elemetns.value.activities?.forEach(activity => {
-      activity.classList.remove('card-dark');
-      activity.classList.add('card');
-    });
-
-    elemetns.value.btnRegistro?.classList.remove('btn-dark');
-    elemetns.value.btnRegistro?.classList.add('btn');
-    elemetns.value.btnAcessar?.classList.remove('btn-dark');
-    elemetns.value.btnAcessar?.classList.add('btn');
-  }
-
-});
-
-onload = (event) => {
-  event.preventDefault();
-  localStorage.clear();
-};
-
 </script>
 
 <template>
@@ -188,9 +172,9 @@ onload = (event) => {
       <CardContent ref="cardContainer" />
 
       
-      <div class="start-buttons">
-        <Button id="registro-button" botao-texto="Registrar-se" route-botao="/cadastrar-pessoa"></Button>
-        <Button id="acessar-button" botao-texto="Acessar Conta" route-botao="/acessar-conta"></Button>
+      <div class="start-buttons" id="start-buttons">
+        <Button botao-texto="Registrar-se" route-botao="/cadastrar-pessoa"></Button>
+        <Button botao-texto="Acessar Conta" route-botao="/acessar-conta"></Button>
       </div>
 
     </div>
