@@ -3,25 +3,44 @@ import Card from '../commons/Card.vue';
 
 
 const props = defineProps<{
-    contas: Array<any>;
+    contas: {};
 }>();
+
+console.log(props.contas);
 
 </script>
 
 <template>
     <h2 class="title" id="title">Suas contas</h2>
-    <p class="subtitle">Você não possui contas cadastradas </p>
+
+    <!-- <p class="subtitle" v-if="contas.length = 0">Você não possui contas cadastradas </p>
+    <p class="subtitle" v-else-if="contas.length = 1">Você possui 1 conta cadastrada comnosco 🥰 </p>
+    <p class="subtitle" v-else>Você atingiu o máximo de contas possível 🤩 </p>
+
     <div class="contas-content" v-if="contas.length > 0">
         <Card :needIcon="false" v-for="conta in contas" />
     </div>
     <div class="contas-content" v-else>
-        <Card :needIcon="true" />
-    </div>
+        <button class="teste"> 
+            <v-icon icon="mdi-plus" color="white"></v-icon>
+        </button>
+    </div> -->
 
 </template>
 
 <style scoped>
 @media (min-width: 1281px) and (max-width: 1920px) {
+    .teste{
+        background-color: #2c3e50;
+        border-radius: 40%;
+    }
+    .teste:hover{
+        background-color: #3c5670;
+        transform: scale(1.1);
+        border-radius: 40%;
+    }
+
+
     .contas-content {
         display: flex;
         flex-wrap: wrap;

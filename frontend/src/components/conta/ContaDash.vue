@@ -8,7 +8,7 @@ import Swal from 'sweetalert2'
 const route = useRoute();
 const API_KEY = `${import.meta.env.VITE_API_URL}/pessoa/${route.query.id}`;
 const pessoaName = ref('');
-const contas = ref([]);
+const contas = ref({});
 
 function getUsuario(token: string) {
   fetch(API_KEY, {

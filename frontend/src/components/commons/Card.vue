@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { red } from 'vuetify/util/colors';
-
 interface Props{
     title?: string;
     description?: string;
-    needIcon: boolean
 }
 
 const props = defineProps<Props>();
@@ -15,7 +11,6 @@ const props = defineProps<Props>();
     <div class="card">
         <h2>{{ title }}</h2>
         <p>{{ description }}</p>
-        <v-icon v-if="props.needIcon" icon="mdi-domain"></v-icon>
     </div>
 </template>
 
