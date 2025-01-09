@@ -4,6 +4,7 @@ import {router} from './router'
 import App from './App.vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import '@mdi/font/css/materialdesignicons.css'
 
 // Vuetify
 import 'vuetify/styles'
@@ -17,6 +18,9 @@ const app = createApp(App)
 const vuetify = createVuetify({
     components,
     directives,
+    icons:{
+        defaultSet: 'mdi'
+    }
   })
 
 app.component('VueDatePicker', VueDatePicker)

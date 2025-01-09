@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "@vee-validate/yup": "^4.14.7",
     "@vuepic/vue-datepicker": "^10.0.0",
     "frontend": "file:",
