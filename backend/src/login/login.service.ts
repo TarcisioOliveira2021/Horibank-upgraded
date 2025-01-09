@@ -34,6 +34,6 @@ export class LoginService {
             return  usuarioFounded;
         }
 
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('Senha ou login inválidos');
     }
 }
