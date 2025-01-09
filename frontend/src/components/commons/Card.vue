@@ -1,43 +1,28 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { red } from 'vuetify/util/colors';
+
+interface Props{
+    title?: string;
+    description?: string;
+    needIcon: boolean
+}
+
+const props = defineProps<Props>();
+</script>
 
 <template>
-    <h2 class="card-content-title" id="card-content-title">Nossas vantagens</h2>
-
-    <section class="activities" id="activities">
-        <div class="card">
-            <h2>Criação de contas</h2>
-            <p>Abra sua conta corrente ou poupança e tenha acesso a diversos benefícios</p>
-        </div>
-
-        <div class="card">
-            <h2>Tranferencias</h2>
-            <p>Realize transferencias entre múltiplas contas da sua ou outras titularidades</p>
-        </div>
-
-        <div class="card">
-            <h2>Acesso simples</h2>
-            <p>Acesse de forma online os serviços e informações da sua conta</p>
-        </div>
-
-        <div class="card">
-            <h2>Empréstimos</h2>
-            <p>Simule e contrate empréstimos com as melhores taxas do mercado</p>
-        </div>
-    </section>
+    <div class="card">
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+        <v-icon v-if="props.needIcon" icon="mdi-domain"></v-icon>
+    </div>
 </template>
 
-<style scoped>
+<style>
 @media (min-width: 1281px) and (max-width: 1920px)  {
-
-    .activities {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-    }
-
     .card {
-        width: 300px;
+        width: 250px;
         height: 200px;
         margin: 12px;
         padding: 20px;
@@ -56,26 +41,6 @@
         transition: 0.2s;
         background: -webkit-linear-gradient(317deg, #42d392 2%, #061147);
         color: white;
-    }
-
-    .card-content-title {
-        font-size: 30px;
-        font-weight: lighter;
-        letter-spacing: -1.5px;
-        font-family: var(--font-code);
-        text-align: center;
-        color: #2c3e50;
-        margin: 4rem 2rem 1rem 2rem;
-    }
-
-    .card-content-title-dark{
-        font-size: 30px;
-        font-weight: lighter;
-        letter-spacing: -1.5px;
-        font-family: var(--font-code);
-        text-align: center;
-        color: white;
-        margin: 4rem 2rem 1rem 2rem;
     }
 
     .card-dark{
@@ -101,7 +66,6 @@
         -webkit-text-fill-color: #2c3e50;
     }
 }
-
 @media (min-width: 100px) and (max-width: 1280px) {
     .card {
         color: white;
@@ -120,17 +84,6 @@
         transition: 0.2s;
         background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.308) 2%, #061147);
         color: white;
-    }
-
-
-    .card-content-title {
-        color: white;
-        font-size: 30px;
-        font-weight: lighter;
-        letter-spacing: -1.5px;
-        font-family: var(--font-code);
-        text-align: center;
-        margin: 4rem 2rem 1rem 2rem;
     }
 }
 </style>

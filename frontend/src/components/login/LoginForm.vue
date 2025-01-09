@@ -11,8 +11,8 @@ const showPassword = ref(false);
 const router = useRouter();
 
 const schema = yup.object({
-    login: yup.string().min(5).max(20).required('O campo obrigatório'),
-    password: yup.string().min(8).max(20).required('O campo obrigatório').matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+    login: yup.string().min(6,'O campo deve ter no mínimo 6 caracteres').max(12,'O campo deve ter no máximo 12 caracteres').required('O campo obrigatório'),
+    password: yup.string().min(8,'O campo deve ter no mínimo 8 caracteres').max(16,'O campo deve ter no máximo 16 caracteres').required('O campo obrigatório').matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial')
 }).required();
 
 const togglePasswordVisibility = () => {
@@ -29,7 +29,8 @@ function onSubmit(values: any) {
     }).then(response => {
         if (response.ok) {
             response.json().then(resp => {
-                router.push({ path: '/conta-dashboard', query: { id: resp.id, token: resp.token } });
+                document.cookie = `token=${resp.token};`;
+                router.push({ path: '/conta-dashboard', query: { id: resp.id } });
             });
         } else {
             response.json().then(resp => {
