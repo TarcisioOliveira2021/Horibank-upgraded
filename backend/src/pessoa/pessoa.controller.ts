@@ -16,10 +16,9 @@ export class PessoaController {
     }
 
 
-    @UseGuards(AuthGuard)
     @HttpCode(HttpStatus.OK)
     @Get('/:id')
-    getUsuario(@Param('id') id: string) {
-        return this.pessoaService.getPessoaId(id);
+    async getUsuario(@Param('id') id: string) {
+        return await this.pessoaService.getPessoaId(id);
     }
 }

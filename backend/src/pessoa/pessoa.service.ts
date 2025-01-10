@@ -1,7 +1,8 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PessoaDTO } from './pessoa_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class PessoaService {
@@ -10,13 +11,13 @@ export class PessoaService {
     ) {
     }
 
-    async cadastrarPessoa(pessoa: PessoaDTO){
+    async cadastrarPessoa(pessoa: PessoaDTO) {
         this.convertDataNascimento(pessoa);
         await this.verificarUsuarioCadastrado(pessoa.usuario);
         const senhaHas = await this.hashearSenha(pessoa.senha);
 
         await this.prismaService.pessoa.create(
-            {      
+            {
                 data: {
                     nuCPF: pessoa.nuCPF,
                     dataNascimento: pessoa.dataNascimento,
@@ -25,8 +26,8 @@ export class PessoaService {
                     senha: senhaHas,
                     email: pessoa.email,
                     numero_celular: pessoa.numero_celular
-                }          
-        });
+                }
+            });
 
         return {
             statusCode: HttpStatus.CREATED,
@@ -34,25 +35,25 @@ export class PessoaService {
         };
     }
 
-    private convertDataNascimento(pessoa: PessoaDTO){
+    private convertDataNascimento(pessoa: PessoaDTO) {
         const dataNascimento = new Date(pessoa.dataNascimento).toISOString();
         pessoa.dataNascimento = dataNascimento.toString();
     }
 
-    async hashearSenha(senha: string): Promise<string>{
+    async hashearSenha(senha: string): Promise<string> {
         const salt = await bcrypt.genSalt();
         return await bcrypt.hash(senha, salt);
     }
 
-    async verificarUsuarioCadastrado(usuario: string){
+    async verificarUsuarioCadastrado(usuario: string) {
         const usuarioRetornado = await this.getPessoa(usuario);
 
-        if(usuarioRetornado != null){
+        if (usuarioRetornado != null) {
             throw new BadRequestException('Usuário já cadastrado');
-        }	
+        }
     }
 
-    async getPessoaId(pessoaId: string){ 
+    async getPessoaId(pessoaId: string) {
         const pessoa = await this.prismaService.pessoa.findUnique({
             where: {
                 id: parseInt(pessoaId)
@@ -61,6 +62,9 @@ export class PessoaService {
                 contas: true
             }
         });
+    
+        if (!pessoa)
+            throw new NotFoundException('Pessoa não encontrada');
 
         return {
             id: pessoa.id,
@@ -73,7 +77,7 @@ export class PessoaService {
         }
     }
 
-    async getPessoa(usuario: string){
+    async getPessoa(usuario: string) {
         return await this.prismaService.pessoa.findFirst({
             where: {
                 usuario: usuario
