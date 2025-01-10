@@ -1,7 +1,4 @@
-export class ContaDTO {
-    idPessoa: number;
-    numero: number;
-    digito: number;
-    saldo: number;
+export class ContaDTO{
+    idPessoa: string;
     tipoConta: string;
 }

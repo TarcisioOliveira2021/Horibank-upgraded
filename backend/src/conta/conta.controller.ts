@@ -1,5 +1,6 @@
-import { Body, Controller, Post, Get, Param} from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, UseGuards} from '@nestjs/common';
 import { ContaService } from './conta.service';
+import { AuthGuard } from '../login/auth.guard';
 import { ContaDTO } from './conta_dto';
 
 
@@ -7,13 +8,15 @@ import { ContaDTO } from './conta_dto';
 export class ContaController {
     constructor(private contaService: ContaService) {}
 
+    @UseGuards(AuthGuard)
     @Post('cadastrar')
-    cadastrarConta(@Body() contaDTO: ContaDTO) {
-        return this.contaService.cadastrarConta(contaDTO);
+    cadastrarConta(@Body() conta: ContaDTO) {
+        return this.contaService.cadastrarConta(conta);
     }
 
+    @UseGuards(AuthGuard)
     @Get('listar-contas/:idPessoa')
     listarContas(@Param("idPessoa") idPessoa: string) {
-        return this.contaService.listarContas(Number(idPessoa));
+        return this.contaService.listarContas(+idPessoa);
     }
 }
