@@ -24,6 +24,7 @@ model Conta{
   pessoa Pessoa @relation(fields: [idPessoa], references: [id])
   idPessoa Int 
   numero Int
+  agencia Int
   digito Int
   saldo Float
   tipoConta String
