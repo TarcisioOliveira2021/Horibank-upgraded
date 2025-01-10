@@ -228,7 +228,7 @@ function getLocalStorageIsDark() {
     align-items: center;
     justify-content: center;
     display: flex;
-    height: 100vh;
+    height: 100%;
     width: 100%;
   }
 
@@ -246,6 +246,7 @@ function getLocalStorageIsDark() {
     background-color: #42d392;
     transition: 0.5s;
     box-shadow: none;
+    overflow: hidden !important;
   }
 
   .text {

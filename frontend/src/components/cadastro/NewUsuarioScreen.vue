@@ -158,6 +158,7 @@ function getLocalStorageIsDark() {
     backdrop-filter: blur(5px);
     background-color: rgba(212, 212, 212, 0.6);
     margin: 1rem 2rem 1rem 2rem;
+    overflow: hidden !important;
   }
 
   .text-subtext-container {

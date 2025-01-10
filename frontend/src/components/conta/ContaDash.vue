@@ -8,7 +8,7 @@ import Swal from 'sweetalert2'
 const route = useRoute();
 const API_KEY = `${import.meta.env.VITE_API_URL}/pessoa/${route.query.id}`;
 const pessoaName = ref('');
-const contas = ref({});
+let contas = ref([{}]);
 
 function getUsuario(token: string) {
   fetch(API_KEY, {
@@ -28,8 +28,9 @@ function getUsuario(token: string) {
           confirmButtonText: 'Ok',
           confirmButtonColor: '#42d392',
         });
+
         pessoaName.value = resp.nome_completo;
-        contas.value = resp.contas;
+        contas = resp.contas;
       });
     } else {
       Swal.fire({
@@ -86,7 +87,9 @@ onMounted(() => {
       </div>
 
       <div class="content">
-        <ContaContent :contas="contas"/>
+        <!-- <h2 class="title" id="title">Suas contas</h2>
+        <p class="subtitle" v-if="contas.length > 0">Você possui {{contas.length}} conta(s) cadastrada(s) comnosco 🥰 </p> -->
+        <ContaContent :contas="contas" />
       </div>
     </div>
   </div>
@@ -144,6 +147,7 @@ onMounted(() => {
     align-items: center;
     backdrop-filter: blur(5px);
     background-color: rgba(212, 212, 212, 0.6);
+    overflow: hidden !important;
   }
 
   .grettings-text-h1 {
@@ -176,6 +180,23 @@ onMounted(() => {
     font-family: var(--font-code);
     text-align: center;
     margin: 8rem 2rem 1rem 2rem;
+  }
+
+  .contas-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 30px;
+    font-weight: lighter;
+    letter-spacing: -1.5px;
+    font-family: var(--font-code);
+    text-align: center;
+    color: #2c3e50;
+    margin: 4rem 2rem 0rem 2rem;
   }
 }
 

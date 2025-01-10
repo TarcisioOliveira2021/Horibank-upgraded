@@ -1,29 +1,27 @@
 <script setup lang="ts">
 import Card from '../commons/Card.vue';
-
+import { watch, ref } from 'vue';
 
 const props = defineProps<{
-    contas: {};
+    contas: {}[];
 }>();
-
-console.log(props.contas);
-
 </script>
 
 <template>
     <h2 class="title" id="title">Suas contas</h2>
 
-    <!-- <p class="subtitle" v-if="contas.length = 0">Você não possui contas cadastradas </p>
-    <p class="subtitle" v-else-if="contas.length = 1">Você possui 1 conta cadastrada comnosco 🥰 </p>
-    <p class="subtitle" v-else>Você atingiu o máximo de contas possível 🤩 </p>
+    <p class="subtitle" v-if="contas.length = 0">Você não possui conta(s) cadastrada(s) comnosco 😭 </p>
+    <p class="subtitle" v-else> Você possui {{contas.length}} conta(s) cadastrada(s) comnosco 🥰 </p>
 
-    <div class="contas-content" v-if="contas.length > 0">
-        <Card :needIcon="false" v-for="conta in contas" />
+    <div class="contas-content" v-if="props.contas.length > 0">
+        <Card :needIcon="false" v-for="conta in props.contas"/>
     </div>
-    <div class="contas-content" v-else>
+    
+    <!-- <div class="contas-content" v-else>
         <button class="teste"> 
             <v-icon icon="mdi-plus" color="white"></v-icon>
         </button>
+        <Card></Card>
     </div> -->
 
 </template>
@@ -39,7 +37,6 @@ console.log(props.contas);
         transform: scale(1.1);
         border-radius: 40%;
     }
-
 
     .contas-content {
         display: flex;

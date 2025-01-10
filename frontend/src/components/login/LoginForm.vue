@@ -11,8 +11,8 @@ const showPassword = ref(false);
 const router = useRouter();
 
 const schema = yup.object({
-    login: yup.string().min(6,'O campo deve ter no mínimo 6 caracteres').max(12,'O campo deve ter no máximo 12 caracteres').required('O campo obrigatório'),
-    password: yup.string().min(8,'O campo deve ter no mínimo 8 caracteres').max(16,'O campo deve ter no máximo 16 caracteres').required('O campo obrigatório').matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial')
+    login: yup.string().required('O campo obrigatório'),
+    password: yup.string().required('O campo obrigatório')
 }).required();
 
 const togglePasswordVisibility = () => {
@@ -44,6 +44,15 @@ function onSubmit(values: any) {
                 })
             });
         }
+    }).catch(error => {
+        Swal.fire({
+            title: 'Falha no processamento',
+            text: `${error} 😭😭`,
+            icon: 'error',
+            iconColor: '#42d392',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#42d392',
+        })
     });
 }
 </script>
@@ -51,12 +60,12 @@ function onSubmit(values: any) {
 <template>
     <Form @submit="onSubmit" :validation-schema="schema">
 
-        <Field class="usuario-field" name="login" placeholder="login" type="text" id="usuario-field"/>
+        <Field class="usuario-field" name="login" placeholder="login" type="text" id="usuario-field" autocomplete="username"/>
         <ErrorMessage name="login"></ErrorMessage>
 
         <div class="password-input">
             <Field class="password-field" name="password" :type="showPassword ? 'text' : 'password'"
-                placeholder="password" id="password-field"/>
+                placeholder="password" id="password-field" autocomplete="current-password"/>
             <button type="button" class="toggle-password" @click="togglePasswordVisibility">
                 <span v-if="showPassword">🙈</span>
                 <span v-else>👁️</span>
