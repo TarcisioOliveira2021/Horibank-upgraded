@@ -27,7 +27,7 @@ const props = defineProps<Props>();
         color: #2c3e50;
         align-content: center;
         text-align: center;
-        cursor: not-allowed;
+        cursor: pointer;
     }
 
     .card:hover {

@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import ContaContent from './ContaContent.vue';
 import { useRoute } from 'vue-router';
+import type { Conta } from '../interface/conta_inteface';
+import ContaContent from './ContaContent.vue';
 import Button from '../commons/CustomButton.vue';
 import Swal from 'sweetalert2'
 
 const route = useRoute();
-const API_KEY = `${import.meta.env.VITE_API_URL}/pessoa/${route.query.id}`;
+const GET_PESSOA = `${import.meta.env.VITE_GET_PESSOA_URL}/${route.query.id}`;
+
 const pessoaName = ref('');
-let contas = ref([{}]);
+let contas = ref<Conta[]>([]);
 
 function getUsuario(token: string) {
-  fetch(API_KEY, {
+  fetch(GET_PESSOA, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -20,17 +22,8 @@ function getUsuario(token: string) {
   }).then(response => {
     if (response.ok) {
       response.json().then(resp => {
-        Swal.fire({
-          title: 'Sucesso 🎉',
-          text: 'Usuário autenticado com sucesso 😎😎',
-          icon: 'success',
-          iconColor: '#42d392',
-          confirmButtonText: 'Ok',
-          confirmButtonColor: '#42d392',
-        });
-
         pessoaName.value = resp.nome_completo;
-        contas = resp.contas;
+        contas.value = resp.contas;
       });
     } else {
       Swal.fire({
@@ -87,9 +80,7 @@ onMounted(() => {
       </div>
 
       <div class="content">
-        <!-- <h2 class="title" id="title">Suas contas</h2>
-        <p class="subtitle" v-if="contas.length > 0">Você possui {{contas.length}} conta(s) cadastrada(s) comnosco 🥰 </p> -->
-        <ContaContent :contas="contas" />
+        <ContaContent :contas="contas"/>
       </div>
     </div>
   </div>
