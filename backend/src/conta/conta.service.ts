@@ -1,8 +1,6 @@
-import { Injectable, HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, HttpStatus, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ContaDTO } from './conta_dto';
-import { Prisma } from '@prisma/client';
-import { NotFoundException } from '@nestjs/common';
 
 //Código para resolver o problema de serialização do JSON para  BigInt
 declare global {
@@ -14,7 +12,7 @@ BigInt.prototype.toJSON = function () { return Number(this); }
 
 @Injectable()
 export class ContaService {
-    constructor(private prismaService: PrismaService) { }
+    constructor(private readonly prismaService: PrismaService) { }
 
     async cadastrarConta(conta: ContaDTO) {
         await this.prismaService.conta.create({ data: await this.criarConta(conta) });

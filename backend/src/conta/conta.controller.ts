@@ -6,7 +6,7 @@ import { ContaDTO } from './conta_dto';
 
 @Controller('conta')
 export class ContaController {
-    constructor(private contaService: ContaService) {}
+    constructor(private readonly contaService: ContaService) {}
 
     @UseGuards(AuthGuard)
     @Post('cadastrar')
