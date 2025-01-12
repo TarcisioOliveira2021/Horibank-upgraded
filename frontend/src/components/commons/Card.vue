@@ -2,6 +2,7 @@
 interface Props{
     title?: string;
     description?: string;
+    needIcon: boolean;
 }
 
 const props = defineProps<Props>();
@@ -10,6 +11,7 @@ const props = defineProps<Props>();
 <template>
     <div class="card">
         <h2>{{ title }}</h2>
+        <v-icon v-if="needIcon" icon="mdi-bank-outline" class="icone"></v-icon>
         <p>{{ description }}</p>
     </div>
 </template>
@@ -17,8 +19,8 @@ const props = defineProps<Props>();
 <style>
 @media (min-width: 1281px) and (max-width: 1920px)  {
     .card {
-        width: 250px;
-        height: 200px;
+        width: 150px;
+        height: 100px;
         margin: 12px;
         padding: 20px;
         border-radius: 15px;
@@ -27,7 +29,16 @@ const props = defineProps<Props>();
         color: #2c3e50;
         align-content: center;
         text-align: center;
-        cursor: pointer;
+        cursor: pointer !important;
+    } 
+
+    h2{
+        font-size: 14px;
+    }
+
+    .icone {
+        color: #42d392;
+        transition: color 0.2s;
     }
 
     .card:hover {
@@ -35,6 +46,10 @@ const props = defineProps<Props>();
         box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.5);
         transition: 0.2s;
         background: -webkit-linear-gradient(317deg, #42d392 2%, #061147);
+        color: white;
+    }
+
+    .card:hover .icone {
         color: white;
     }
 

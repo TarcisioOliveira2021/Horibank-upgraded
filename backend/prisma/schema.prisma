@@ -26,7 +26,7 @@ model Conta{
   numero Int
   agencia Int
   digito Int
-  saldo Float
+  saldo Decimal @db.Decimal(9,2)
   tipoConta String
   transferenciasOrigem Transferencia[] @relation("ContaOrigem")
   transferenciasDestino Transferencia[] @relation("ContaDestino")

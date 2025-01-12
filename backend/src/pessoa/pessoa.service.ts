@@ -2,12 +2,14 @@ import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '
 import { PessoaDTO } from './pessoa_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { NotFoundError } from 'rxjs';
+import { ContaService } from 'src/conta/conta.service';
+
 
 @Injectable()
 export class PessoaService {
     constructor(
-        private readonly prismaService: PrismaService
+        private readonly prismaService: PrismaService,
+        private readonly contaService: ContaService
     ) {
     }
 
@@ -66,6 +68,11 @@ export class PessoaService {
         if (!pessoa)
             throw new NotFoundException('Pessoa não encontrada');
 
+        const contas = pessoa.contas.map(conta => ({
+            ...conta,
+            saldo: this.contaService.formatarSaldo(conta.saldo)
+        }));
+
         return {
             id: pessoa.id,
             nome_completo: pessoa.nome_completo,
@@ -73,7 +80,7 @@ export class PessoaService {
             dataNascimento: pessoa.dataNascimento,
             email: pessoa.email,
             numero_celular: pessoa.numero_celular,
-            contas: pessoa.contas
+            contas: contas
         }
     }
 
@@ -84,4 +91,6 @@ export class PessoaService {
             }
         });
     }
+
+    
 }

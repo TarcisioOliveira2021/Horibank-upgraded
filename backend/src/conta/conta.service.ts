@@ -1,6 +1,7 @@
 import { Injectable, HttpStatus, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ContaDTO } from './conta_dto';
+import Decimal from 'decimal.js';
 
 //Código para resolver o problema de serialização do JSON para  BigInt
 declare global {
@@ -102,13 +103,35 @@ export class ContaService {
     }
 
 
-    async listarContas(id: number) {
-        let contas = await this.prismaService.conta.findMany({ where: { idPessoa: id } });
+    public async depositar(id: string, valor: number) {
+        let conta = await this.prismaService.conta.findUnique({
+            where: {
+                id: +id
+            }
+        });
 
-        if (contas.length == 0) {
-            throw new NotFoundException("Você não possui contas cadastradas");
+        if (!conta) {
+            throw new NotFoundException("Conta não encontrada");
         }
 
-        return contas;
+        conta.saldo = new Decimal(conta.saldo).plus(valor);
+
+        await this.prismaService.conta.update({
+            where: {
+                id: +id
+            },
+            data: {
+                saldo: conta.saldo 
+            }
+        });
+
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Depósito realizado com sucesso'
+        };
+    }
+
+    public formatarSaldo(saldo: Decimal): string {
+        return new Decimal(saldo).toFixed(2);
     }
 }

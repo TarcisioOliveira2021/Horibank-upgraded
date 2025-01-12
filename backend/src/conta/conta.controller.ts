@@ -15,8 +15,10 @@ export class ContaController {
     }
 
     @UseGuards(AuthGuard)
-    @Get('listar-contas/:idPessoa')
-    listarContas(@Param("idPessoa") idPessoa: string) {
-        return this.contaService.listarContas(+idPessoa);
+    @Post('depositar/:id')
+    depositar(@Param('id') id: string, @Body('valor') valor: number) {
+        return this.contaService.depositar(id, valor);
     }
+
+
 }
