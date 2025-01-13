@@ -1,7 +1,9 @@
 import { Injectable, HttpStatus, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { TransacaoService } from '../transacao/transacao.service';
 import { ContaDTO } from './conta_dto';
 import Decimal from 'decimal.js';
+import { Conta } from '@prisma/client';
 
 //Código para resolver o problema de serialização do JSON para  BigInt
 declare global {
@@ -14,7 +16,10 @@ BigInt.prototype.toJSON = function () { return Number(this); }
 @Injectable()
 export class ContaService {
 
-    constructor(private readonly prismaService: PrismaService) { }
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly transacaoService: TransacaoService
+    ) { }
 
     async cadastrarConta(conta: ContaDTO) {
         await this.prismaService.conta.create({ data: await this.criarConta(conta) });
@@ -103,31 +108,21 @@ export class ContaService {
         return false;
     }
 
-
     public async depositar(id: string, valor: number) {
-        if (valor <= 0) {
-            throw new InternalServerErrorException("Valor inválido");
-        }
-
         let conta = await this.prismaService.conta.findUnique({
             where: {
                 id: +id
             }
         });
 
-        if (!conta) {
-            throw new NotFoundException("Conta não encontrada");
-        }
-
+        this.validarDeposito(valor,conta);
         conta.saldo = new Decimal(conta.saldo).plus(valor);
-
-        await this.prismaService.conta.update({
-            where: {
-                id: +id
-            },
-            data: {
-                saldo: conta.saldo 
-            }
+        await this.atualizarSaldoConta(+id, conta.saldo);
+        await this.transacaoService.criarTransacao({
+            idConta: +id,
+            valor: valor,
+            data: new Date(),
+            tipo: "DEPOSITO"
         });
 
         return {
@@ -135,45 +130,58 @@ export class ContaService {
         };
     }
 
-    public async sacar(id: string, valor: number) {
-        if (valor <= 0) {
-            throw new InternalServerErrorException("Valor inválido");
-        }
+    private validarDeposito(valor: number, conta: Conta) {
+        this.verificarSaldoNegativoZero(valor);
 
+        if (!conta) {
+            throw new NotFoundException("Conta não encontrada");
+        }
+    }
+
+    public async sacar(id: string, valor: number) {
         let conta = await this.prismaService.conta.findUnique({
             where: {
                 id: +id
             }
         });
-
-        if (!conta) {
-            throw new NotFoundException("Conta não encontrada");
-        }
-
-        if (new Decimal(conta.saldo).lessThan(valor)) {
-            throw new InternalServerErrorException("Saldo insuficiente para saque");
-        }
-
+        
+        this.validarSaque(conta, valor);
         conta.saldo = new Decimal(conta.saldo).minus(valor);
-
-        await this.prismaService.conta.update({
-            where: {
-                id: +id
-            },
-            data: {
-                saldo: conta.saldo 
-            }
+        this.atualizarSaldoConta(+id, conta.saldo);
+        await this.transacaoService.criarTransacao({
+            idConta: +id,
+            valor: valor,
+            data: new Date(),
+            tipo: "SAQUE"
         });
-
+        
         return {
             statusCode: HttpStatus.OK,
             message: 'Saque realizado com sucesso'
         };
-
+    }
+    
+    private validarSaque(conta: Conta, valor: number) {
+        this.verificarSaldoNegativoZero(valor);
+        
+        if (!conta) {
+            throw new NotFoundException("Conta não encontrada");
+        }
+        
+        if (new Decimal(conta.saldo).lessThan(valor)) {
+            throw new InternalServerErrorException("Saldo insuficiente para saque");
+        }
     }
 
-    public formatarSaldo(saldo: Decimal): string {
-        return new Decimal(saldo).toFixed(2);
+    public async atualizarSaldoConta(id: number, saldo: Decimal) {
+        await this.prismaService.conta.update({
+            where: {
+                id: id
+            },
+            data: {
+                saldo: saldo 
+            }
+        });
     }
 
     public async encerrarConta(id: string) {
@@ -198,7 +206,10 @@ export class ContaService {
             message: 'Conta encerrada com sucesso'
         };
     }
-
+    
+    public formatarSaldo(saldo: Decimal): string {
+        return new Decimal(saldo).toFixed(2);
+    }
 
     public async buscarContaDestino(contaDestino: string, agenciaDestino: string, idContaOrigem: string) {
         contaDestino = contaDestino.split("-")[0];
@@ -233,5 +244,11 @@ export class ContaService {
             digitoContaDestino: conta.digito,
             tipoContaDestino: conta.tipoConta
         };
+    }
+
+    public verificarSaldoNegativoZero(valor: number) {
+        if (valor <= 0) {
+            throw new InternalServerErrorException("Valor inválido, insira um valor maior que zero");
+        }
     }
 }

@@ -30,6 +30,9 @@ model Conta{
   tipoConta String
   transferenciasOrigem Transferencia[] @relation("ContaOrigem")
   transferenciasDestino Transferencia[] @relation("ContaDestino")
+
+  Transacao Transacao[] @relation("Conta")
+  ChavePix ChavePix?
 }
 
 model Transferencia{
@@ -40,4 +43,21 @@ model Transferencia{
   idContaDestino Int
   valor Float
   data DateTime
+}
+
+model Transacao{
+  id Int @id @default(autoincrement())
+  conta Conta @relation("Conta", fields: [idConta], references: [id])
+  idConta Int
+  valor Float
+  data DateTime
+  tipoTransacao String
+}
+
+model ChavePix{
+  id Int @id @default(autoincrement())
+  conta Conta @relation(fields: [idConta], references: [id])
+  idConta Int @unique
+  chave String
+  tipoChave String
 }
