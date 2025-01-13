@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import Decimal from 'decimal.js';
 import { ContaService } from '../conta/conta.service';
 import { TransacaoService } from '../transacao/transacao.service';
+import { TransferenciaDTO } from '../transferencia/transferencia_dto';
 
 @Injectable()
 export class TransferenciaService {
@@ -63,5 +64,41 @@ export class TransferenciaService {
         if (new Decimal(contaOrigem.saldo).toNumber() < valor) {
             throw new InternalServerErrorException('Saldo da conta insuficiente para fazer a transferência');
         }
+    }
+
+    public async buscarTransferencias(idConta: number) {
+        let transferencias = await this.prismaService.transferencia.findMany({
+            where: {
+                idContaOrigem: idConta
+            },
+            include: {
+                contaDestino: {
+                    include: {
+                        pessoa: true
+                    }
+                }
+            }
+        });
+
+        if (!transferencias) {
+            throw new NotFoundException('Nenhuma transferência encontrada para a conta informada');
+        }
+
+
+        const transferenciasDTO: TransferenciaDTO[] = [];
+
+        transferencias.map(transferencia => {
+            transferenciasDTO.push({
+                titularContaDestino: transferencia.contaDestino.pessoa.nome_completo,
+                agenciaContaDestino: transferencia.contaDestino.agencia,
+                numero_digitoContaDestino: transferencia.contaDestino.numero + '-' + transferencia.contaDestino.digito,
+                tipoContaDestino: transferencia.contaDestino.tipoConta,
+                valor: 'R$'+transferencia.valor.toFixed(2),
+                data: transferencia.data.getDate().toString() + '/' + (transferencia.data.getMonth() + 1).toString() + '/' + transferencia.data.getFullYear().toString()
+            });
+        });
+
+
+        return transferenciasDTO;
     }
 }

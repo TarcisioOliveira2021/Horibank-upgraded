@@ -7,6 +7,7 @@ import { vMaska } from 'maska/vue';
 import CurrencyInput from '../commons/CurrencyInput.vue';
 import type { Conta } from '../interface/conta_inteface';
 import type { ContaDestino } from '../interface/conta_destino_interface';
+import type { HistoricoTransferencia } from '../interface/historico_transferencia_interface';
 import confetti from 'canvas-confetti';
 import { Field } from 'vee-validate';
 
@@ -15,6 +16,7 @@ const modalConta = ref(false);
 const modalDepositar = ref(false);
 const modalSacar = ref(false);
 const modalTransferir = ref(false);
+const modalHistoricoTransferencias = ref(false);
 
 const valorDeposito = ref(0);
 const valorSaque = ref(0);
@@ -24,6 +26,7 @@ const conta_digito = ref();
 
 const selectedConta = ref<Conta>();
 const conta_destino = ref<ContaDestino>();
+const historico_transferencia = ref<HistoricoTransferencia[]>([]);
 
 const CADASTRAR_CONTA_ROUTE = import.meta.env.VITE_CADASTRAR_CONTA_URL;
 const DEPOSITAR_ROUTE = import.meta.env.VITE_DEPOSITAR_URL;
@@ -31,16 +34,22 @@ const SACAR_ROUTE = import.meta.env.VITE_SACAR_URL;
 const ENCERRAR_CONTA_ROUTE = import.meta.env.VITE_ENCERRAR_CONTA_URL;
 const TRANSFERIR_ROUTE = import.meta.env.VITE_TRANSFERIR_URL;
 const CONTA_GET_ROUTE = import.meta.env.VITE_OBTER_INFORMACOES_CONTA_DESTINO_URL;
+const HISTORICO_TRANSFERENCIA_ROUTE = import.meta.env.VITE_OBTER_HISTORICO_CONTA_URL;
 
 const props = defineProps<{
     contas: Conta[];
 }>();
 
-// watch(conta_destino, (newValue) => {
-//     if (newValue) {
-//         conta_destino.value = newValue;
-//     }
-// });
+const headersTable = [
+    { title: 'Titular', align: 'start', key: 'titularContaDestino' },
+    { title: 'Agencia', align: 'start', key:'agenciaContaDestino' },
+    { title: 'Conta', align: 'start', key:'numero_digitoContaDestino' },
+    { title: 'Tipo Conta', align: 'start', key:'tipoContaDestino' },
+    { title: 'Valor', align: 'start', key: 'valor' },
+    { title: 'Data', align: 'start', key: 'data' },
+];
+
+
 
 function criarConta() {
     Swal.fire({
@@ -151,12 +160,14 @@ function cadastrarConta(idPessoa: string | undefined, tipoConta: string) {
     } else {
         Swal.fire({
             title: 'Falha no processamento',
-            text: `Token de autenticação não encontrado 😭😭`,
+            text: `Token de autenticação não encontrado, logue novamente 😭😭`,
             icon: 'error',
             iconColor: '#42d392',
             confirmButtonText: 'Ok',
             confirmButtonColor: '#42d392',
-        })
+        }).then(() => {
+            window.location.href = '/acessar-conta';
+        });
     }
 }
 
@@ -182,6 +193,70 @@ function exibirModalSacar() {
 function exibirModalTransferir() {
     modalConta.value = false;
     modalTransferir.value = true;
+}
+
+async function exibirModaHistoricoTransferencias() {
+    modalConta.value = false;
+    modalHistoricoTransferencias.value = true;
+
+    let token = getAuthenticationToken();
+    await obterHistoricoTransferencias(token, selectedConta.value?.id);
+}
+
+async function obterHistoricoTransferencias(token: string | undefined, idConta: number | undefined) {
+    const URL = `${HISTORICO_TRANSFERENCIA_ROUTE}/${idConta}`;
+
+    if (token) {
+        const response = await fetch(URL, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+
+        if (response.ok) {
+            const resp = await response.json();
+            historico_transferencia.value = resp;
+        } else {
+            const resp = await response.json();
+
+            if (resp.message === 'Nenhuma transferência encontrada para a conta informada') {
+                Swal.fire({
+                    title: 'Histórico de transferências',
+                    text: 'Nenhuma transferência encontrada 😭😭',
+                    icon: 'info',
+                    iconColor: '#42d392',
+                    confirmButtonText: 'Ok',
+                    confirmButtonColor: '#42d392',
+                }).then(() => {
+                    modalHistoricoTransferencias.value = false;
+                });
+            } else {
+                Swal.fire({
+                    title: 'Falha no processamento',
+                    text: `${resp.message} 😭😭`,
+                    icon: 'error',
+                    iconColor: '#42d392',
+                    confirmButtonText: 'Ok',
+                    confirmButtonColor: '#42d392',
+                }).then(() => {
+                    modalHistoricoTransferencias.value = false;
+                });
+            }
+        }
+    } else {
+        Swal.fire({
+            title: 'Falha no processamento',
+            text: `Token de autenticação não encontrado, logue novamente 😭😭`,
+            icon: 'error',
+            iconColor: '#42d392',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#42d392',
+        }).then(() => {
+            window.location.href = '/acessar-conta';
+        });
+    }
 }
 
 function depositar(valor: number, idConta: number | undefined) {
@@ -245,12 +320,14 @@ function depositar(valor: number, idConta: number | undefined) {
     } else {
         Swal.fire({
             title: 'Falha no processamento',
-            text: `Token de autenticação não encontrado 😭😭`,
+            text: `Token de autenticação não encontrado, logue novamente 😭😭`,
             icon: 'error',
             iconColor: '#42d392',
             confirmButtonText: 'Ok',
             confirmButtonColor: '#42d392',
-        })
+        }).then(() => {
+            window.location.href = '/acessar-conta';
+        });
     }
 
 }
@@ -314,12 +391,14 @@ function sacar(valor: number, idConta: number | undefined) {
     } else {
         Swal.fire({
             title: 'Falha no processamento',
-            text: `Token de autenticação não encontrado 😭😭`,
+            text: `Token de autenticação não encontrado, logue novamente 😭😭`,
             icon: 'error',
             iconColor: '#42d392',
             confirmButtonText: 'Ok',
             confirmButtonColor: '#42d392',
-        })
+        }).then(() => {
+            window.location.href = '/acessar-conta';
+        });
     }
 
 }
@@ -410,12 +489,14 @@ function encerrarConta(conta: Conta | undefined) {
     } else {
         Swal.fire({
             title: 'Falha no processamento',
-            text: `Token de autenticação não encontrado 😭😭`,
+            text: `Token de autenticação não encontrado, logue novamente 😭😭`,
             icon: 'error',
             iconColor: '#42d392',
             confirmButtonText: 'Ok',
             confirmButtonColor: '#42d392',
-        })
+        }).then(() => {
+            window.location.href = '/acessar-conta';
+        });
     }
 }
 
@@ -509,12 +590,14 @@ function transferirValor(token: string | undefined, valor: number, idContaOrigem
     } else {
         Swal.fire({
             title: 'Falha no processamento',
-            text: `Token de autenticação não encontrado 😭😭`,
+            text: `Token de autenticação não encontrado, logue novamente 😭😭`,
             icon: 'error',
             iconColor: '#42d392',
             confirmButtonText: 'Ok',
             confirmButtonColor: '#42d392',
-        })
+        }).then(() => {
+            window.location.href = '/acessar-conta';
+        });
     }
 }
 
@@ -549,11 +632,13 @@ async function obterInformacoesContaDestino(token: string | undefined, agenciaDe
     } else {
         Swal.fire({
             title: 'Falha no processamento',
-            text: `Token de autenticação não encontrado 😭😭`,
+            text: `Token de autenticação não encontrado, logue novamente 😭😭`,
             icon: 'error',
             iconColor: '#42d392',
             confirmButtonText: 'Ok',
             confirmButtonColor: '#42d392',
+        }).then(() => {
+            window.location.href = '/acessar-conta';
         });
     }
 }
@@ -608,8 +693,10 @@ async function obterInformacoesContaDestino(token: string | undefined, agenciaDe
                     @click="exibirModaldepositar()" />
                 <Card class="card-operacoes-conta" title="Transferir" :need-icon="false"
                     @click="exibirModalTransferir()" />
-                <Card class="card-desabilitado" title="Historico transferencias" :need-icon="false" disabled/>
-                <Card class="card-desabilitado" title="PIX" :need-icon="false" disabled />
+                <Card class="card-operacoes-conta" title="Historico transferencias" :need-icon="false"
+                    @click="exibirModaHistoricoTransferencias()" />
+                <Card class="card-desabilitado" title="PIX" :need-icon="false" />
+                <Card class="card-desabilitado" title="Extrato" :need-icon="false" />
 
             </div>
 
@@ -678,6 +765,28 @@ async function obterInformacoesContaDestino(token: string | undefined, agenciaDe
         </v-card>
     </v-dialog>
 
+    <v-dialog v-model="modalHistoricoTransferencias" max-width="1000px" max-height="900px">
+        <v-card>
+            <v-card-title class="headline">Transferencias da conta</v-card-title>
+            <v-card-subtitle class="subtitle-transferencia">Consulte o histórico de transferências realizadas</v-card-subtitle>
+            <v-divider></v-divider>
+
+            <v-card-text v-if="historico_transferencia.length > 0">
+                <v-data-table 
+                    :headers="headersTable"
+                    :items="historico_transferencia"
+                ></v-data-table>
+            </v-card-text>
+            <v-card-text v-else>
+                <p>Nenhuma transferência encontrada para a conta essa conta 😊</p>
+            </v-card-text>
+
+            <v-card-actions>
+                <v-btn color="green darken-1" text @click="modalHistoricoTransferencias = false">Fechar</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
 </template>
 
 <style scoped>
@@ -711,7 +820,8 @@ async function obterInformacoesContaDestino(token: string | undefined, agenciaDe
         text-align: center;
     }
 
-    .deposito-numero-conta {
+    .deposito-numero-conta,
+    .subtitle-transferencia {
         margin-bottom: 1rem;
     }
 
