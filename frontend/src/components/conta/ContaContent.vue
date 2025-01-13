@@ -36,11 +36,11 @@ const props = defineProps<{
     contas: Conta[];
 }>();
 
-watch(conta_destino, (newValue) => {
-    if (newValue) {
-        conta_destino.value = newValue;
-    }
-});
+// watch(conta_destino, (newValue) => {
+//     if (newValue) {
+//         conta_destino.value = newValue;
+//     }
+// });
 
 function criarConta() {
     Swal.fire({
@@ -432,7 +432,7 @@ async function transferir(valor: number, idConta: number | undefined, agencia: n
         Swal.fire({
             title: 'Tranferir',
             text: 'Confirmar dados da transferência?',
-            html: `Você deseja transferir <b>R$ ${valor}</b> para a conta: <br>
+            html: `Você deseja transferir <b>R$ ${valor.toFixed(2)}</b> para a conta: <br>
                 <p><b>Titular:</b> ${conta_destino.value?.nomeContaDestino}</p>
                 <p><b>Agência:</b> ${conta_destino.value?.agenciaDestino}</p>
                 <p><b>Número:</b> ${conta_destino.value?.numeroContaDestino}-${conta_destino.value?.digitoContaDestino}</p>

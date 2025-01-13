@@ -224,7 +224,7 @@ function validarSenha(senha: string, usuario:string) {
         display: grid;
         justify-items: center;
         grid-template-columns: repeat(2, 1fr);
-        margin: 1rem 1rem 1rem 1rem;
+        margin: 1rem 1rem 7rem 1rem;
     }
 
     .toggle-password {
