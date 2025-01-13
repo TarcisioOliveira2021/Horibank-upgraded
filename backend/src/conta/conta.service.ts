@@ -13,6 +13,7 @@ BigInt.prototype.toJSON = function () { return Number(this); }
 
 @Injectable()
 export class ContaService {
+
     constructor(private readonly prismaService: PrismaService) { }
 
     async cadastrarConta(conta: ContaDTO) {
@@ -58,13 +59,13 @@ export class ContaService {
         if (tipoConta != "CORRENTE" && tipoConta != "POUPANCA")
             throw new InternalServerErrorException("Tipo de conta inválido");
 
-        let tipoContaExitente = await this.prismaService.conta.findMany({
+        let tipoContaExitente = await this.prismaService.conta.findFirst({
             where: {
                 idPessoa: +idPessoa,
                 tipoConta: tipoConta            }
         });
 
-        if (tipoContaExitente.length > 0) {
+        if (tipoContaExitente) {
             throw new InternalServerErrorException("Você já possui uma conta desse tipo cadastrada");
         }
     }
@@ -104,6 +105,10 @@ export class ContaService {
 
 
     public async depositar(id: string, valor: number) {
+        if (valor <= 0) {
+            throw new InternalServerErrorException("Valor inválido");
+        }
+
         let conta = await this.prismaService.conta.findUnique({
             where: {
                 id: +id
@@ -126,12 +131,107 @@ export class ContaService {
         });
 
         return {
-            statusCode: HttpStatus.OK,
-            message: 'Depósito realizado com sucesso'
+            saldoAtual: conta.saldo,
         };
+    }
+
+    public async sacar(id: string, valor: number) {
+        if (valor <= 0) {
+            throw new InternalServerErrorException("Valor inválido");
+        }
+
+        let conta = await this.prismaService.conta.findUnique({
+            where: {
+                id: +id
+            }
+        });
+
+        if (!conta) {
+            throw new NotFoundException("Conta não encontrada");
+        }
+
+        if (new Decimal(conta.saldo).lessThan(valor)) {
+            throw new InternalServerErrorException("Saldo insuficiente para saque");
+        }
+
+        conta.saldo = new Decimal(conta.saldo).minus(valor);
+
+        await this.prismaService.conta.update({
+            where: {
+                id: +id
+            },
+            data: {
+                saldo: conta.saldo 
+            }
+        });
+
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Saque realizado com sucesso'
+        };
+
     }
 
     public formatarSaldo(saldo: Decimal): string {
         return new Decimal(saldo).toFixed(2);
+    }
+
+    public async encerrarConta(id: string) {
+        let conta = await this.prismaService.conta.findUnique({
+            where: {
+                id: +id
+            }
+        });
+
+        if (!conta) {
+            throw new NotFoundException("Conta não encontrada");
+        }
+
+        await this.prismaService.conta.delete({
+            where: {
+                id: +id
+            }
+        });
+
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Conta encerrada com sucesso'
+        };
+    }
+
+
+    public async buscarContaDestino(contaDestino: string, agenciaDestino: string, idContaOrigem: string) {
+        contaDestino = contaDestino.split("-")[0];
+
+        if(contaDestino.length != 6 || agenciaDestino.length != 4){
+            throw new InternalServerErrorException("Conta ou agência com quantidade de dígitos inválida");
+        }
+
+        let conta = await this.prismaService.conta.findFirst({
+            where: {
+                numero: +contaDestino,
+                agencia: +agenciaDestino,
+            },
+            include:{
+                pessoa: true
+            }
+        });
+
+        if (!conta) {
+            throw new NotFoundException("Conta não encontrada");
+        }
+
+        if(conta.id == +idContaOrigem){
+            throw new InternalServerErrorException("Você não pode transferir para você mesmo");
+        }
+
+        return {
+            idContaDestino: conta.id,
+            nomeContaDestino: conta.pessoa.nome_completo,
+            agenciaDestino: conta.agencia,
+            numeroContaDestino: conta.numero,
+            digitoContaDestino: conta.digito,
+            tipoContaDestino: conta.tipoConta
+        };
     }
 }

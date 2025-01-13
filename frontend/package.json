@@ -16,6 +16,7 @@
     "@mdi/font": "^7.4.47",
     "@vee-validate/yup": "^4.14.7",
     "@vuepic/vue-datepicker": "^10.0.0",
+    "canvas-confetti": "^1.9.3",
     "frontend": "file:",
     "maska": "^3.0.4",
     "pinia": "^2.2.6",

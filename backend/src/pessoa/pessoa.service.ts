@@ -15,7 +15,7 @@ export class PessoaService {
 
     async cadastrarPessoa(pessoa: PessoaDTO) {
         this.convertDataNascimento(pessoa);
-        await this.verificarUsuarioCadastrado(pessoa.usuario);
+        await this.verificarUsuarioCadastrado(pessoa.usuario, pessoa.nuCPF);
         const senhaHas = await this.hashearSenha(pessoa.senha);
 
         await this.prismaService.pessoa.create(
@@ -47,7 +47,8 @@ export class PessoaService {
         return await bcrypt.hash(senha, salt);
     }
 
-    async verificarUsuarioCadastrado(usuario: string) {
+    async verificarUsuarioCadastrado(usuario: string, nuCPF: string) {
+        await this.verificarCPF(nuCPF);
         const usuarioRetornado = await this.getPessoa(usuario);
 
         if (usuarioRetornado != null) {
@@ -92,5 +93,16 @@ export class PessoaService {
         });
     }
 
+    private async verificarCPF(nuCPF: string) {
+        const pessoa = await this.prismaService.pessoa.findFirst({
+            where: {
+                nuCPF: nuCPF
+            }
+        });
+
+        if (pessoa != null) {
+            throw new BadRequestException('CPF já cadastrado');
+        }
+    }
     
 }

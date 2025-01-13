@@ -10,8 +10,8 @@ const props = defineProps<Props>();
 
 <template>
     <div class="card">
-        <h2>{{ title }}</h2>
         <v-icon v-if="needIcon" icon="mdi-bank-outline" class="icone"></v-icon>
+        <h2>{{ title }}</h2>
         <p>{{ description }}</p>
     </div>
 </template>
