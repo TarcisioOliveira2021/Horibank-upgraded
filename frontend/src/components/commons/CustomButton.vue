@@ -9,11 +9,13 @@ defineProps<Props>()
 
 <template>
   <template v-if="routeBotao">
-    <button class="btn">
-      <RouterLink :to="routeBotao">{{ botaoTexto }}</RouterLink>
-    </button>
+    <RouterLink :to="routeBotao" custom v-slot="{ navigate }">
+      <button class="btn" @click="navigate">
+        {{ botaoTexto }}
+      </button>
+    </RouterLink>
   </template>
-  <template  v-else>
+  <template v-else>
     <button class="btn">{{ botaoTexto }}</button>
   </template>
 </template>
@@ -49,7 +51,7 @@ defineProps<Props>()
     -webkit-text-fill-color: white;
   }
 
-  .btn-dark{
+  .btn-dark {
     width: 150px;
     height: 40px;
     margin: 1rem 1rem 0rem 1rem;
@@ -59,17 +61,17 @@ defineProps<Props>()
     align-content: center;
     text-align: center;
     cursor: pointer;
-    background: -webkit-linear-gradient(317deg,rgba(212, 212, 212, 0.6) 2%, #ffffff);
+    background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.6) 2%, #ffffff);
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  .btn-dark>a{
+  .btn-dark>a {
     text-decoration: none;
     color: #2c3e50;
   }
 
-  .btn-dark:hover{
+  .btn-dark:hover {
     transform: scale(1.4);
     box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.5);
     transition: 0.2s;

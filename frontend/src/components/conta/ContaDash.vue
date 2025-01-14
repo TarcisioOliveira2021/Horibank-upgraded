@@ -52,12 +52,14 @@ onMounted(() => {
   } else {
     Swal.fire({
       title: 'Falha no processamento',
-      text: `Token de autenticação não encontrado 😭😭`,
+      text: `Token de autenticação não encontrado, logue novamente 😭😭`,
       icon: 'error',
       iconColor: '#42d392',
       confirmButtonText: 'Ok',
       confirmButtonColor: '#42d392',
-    })
+    }).then(() => {
+      window.location.href = '/acessar-conta';
+    });
   }
 });
 </script>
@@ -80,7 +82,7 @@ onMounted(() => {
       </div>
 
       <div class="content">
-        <ContaContent :contas="contas"/>
+        <ContaContent :contas="contas" />
       </div>
     </div>
   </div>

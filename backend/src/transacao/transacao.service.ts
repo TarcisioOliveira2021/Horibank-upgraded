@@ -1,6 +1,7 @@
-import { Injectable, HttpStatus, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TransacaoDTO } from './transacao_dto';
+import { TransacaoSTRUCT } from './transacao_struct';
 
 
 @Injectable()
@@ -32,6 +33,13 @@ export class TransacaoService {
     let transacoes = await this.prismaService.transacao.findMany({
       where: {
         idConta: idConta
+      },
+      include:{
+        conta: {
+          include:{
+            pessoa: true
+          }
+        }
       }
     });
 
@@ -39,6 +47,20 @@ export class TransacaoService {
       throw new NotFoundException('Nenhuma transação encontrada para a conta informada');
 
 
-    return transacoes;
+    const transacoesList: TransacaoSTRUCT[] = [];
+
+    transacoes.forEach(transacao => {
+
+
+
+      transacoesList.push({
+        destinatario: transacao.conta.pessoa.nome_completo,
+        valor: 'R$'+transacao.valor.toFixed(2),
+        data: transacao.data.getDate().toString() + '/' + (transacao.data.getMonth() + 1).toString() + '/' + transacao.data.getFullYear().toString(),
+        tipo: transacao.tipoTransacao,
+      });
+    });
+
+    return transacoesList;
   }
 }

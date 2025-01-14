@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Param } from '@nestjs/common';
 import { AuthGuard } from '../login/auth.guard';
-import { TransacaoDTO } from './transacao_dto';
 import { TransacaoService } from './transacao.service';
 
 @Controller('transacao')
