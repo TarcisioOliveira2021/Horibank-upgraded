@@ -47,5 +47,4 @@ export class ContaController {
     buscarContaDestino(@Param('agenciaDestino') agenciaDestino: string, @Param('contaDestino') contaDestino: string, @Param('idContaOrigem') idContaOrigem: string) {
         return this.contaService.buscarContaDestino(contaDestino, agenciaDestino, idContaOrigem);
     }
-
 }

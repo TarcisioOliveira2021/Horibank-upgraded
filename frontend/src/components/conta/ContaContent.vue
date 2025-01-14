@@ -19,6 +19,8 @@ const modalSacar = ref(false);
 const modalTransferir = ref(false);
 const modalHistoricoTransferencias = ref(false);
 const modalExtrato = ref(false);
+const modalAreaPix = ref(false);
+const modalAreaPix_depositar = ref(false);
 
 const valorDeposito = ref(0);
 const valorSaque = ref(0);
@@ -274,6 +276,16 @@ async function exibirModalExtrato() {
 
     let token = getAuthenticationToken();
     await obterExtrato(token, selectedConta.value?.id);
+}
+
+function exibirModalAreaPix() {
+    modalConta.value = false;
+    modalAreaPix.value = true;
+}
+
+function exibirModalAreaPix_depositar(){
+    modalAreaPix.value = false;
+    modalAreaPix_depositar.value = true;
 }
 
 async function obterExtrato(token: string | undefined, idConta: number | undefined) {
@@ -778,10 +790,10 @@ function colorrirCelula(tipo: string) {
                     @click="exibirModalTransferir()" />
                 <Card class="card-operacoes-conta" title="Historico transferencias" :need-icon="false"
                     @click="exibirModaHistoricoTransferencias()" />
-                <!-- <Card class="card-desabilitado" title="PIX" :need-icon="false" /> -->
+                <Card class="card-operacoes-conta" title="Área PIX" :need-icon="false" 
+                    @click="exibirModalAreaPix()"/>
                 <Card class="card-operacoes-conta" title="Extrato" :need-icon="false" 
                     @click="exibirModalExtrato()"/>
-
             </div>
 
             <v-card-actions>
@@ -896,6 +908,44 @@ function colorrirCelula(tipo: string) {
         </v-card>
     </v-dialog>
 
+    <v-dialog v-model="modalAreaPix" max-width="500px" max-height="1200px">
+        <v-card>
+            <v-card-title class="headline">Área PIX</v-card-title>
+            <v-card-subtitle class="subtitle-area-pix">Aqui você faz operações envolvendo o pix</v-card-subtitle>
+            <v-divider></v-divider>
+
+            <div class="modal-content">
+                <Card class="card-desabilitado" title="Depositar" :need-icon="false"
+                @click="exibirModalAreaPix_depositar()"/>
+                <Card class="card-desabilitado" title="Minhas chaves" :need-icon="false"/>
+                <Card class="card-desabilitado" title="Transferir" :need-icon="false"/>
+            </div>
+        
+            <v-card-actions>
+                <v-btn color="green darken-1" text @click="modalAreaPix = false">Fechar</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="modalAreaPix_depositar" max-width="500px" max-height="1200px">
+        <v-card>
+            <v-card-title class="headline">Depositar PIX</v-card-title>
+            <v-card-subtitle class="subtitle-area-pix">Aqui você faz operações envolvendo o pix</v-card-subtitle>
+            <v-divider></v-divider>
+
+            <div class="modal-content">
+                <Card class="card-operacoes-conta" title="Depositar" :need-icon="false"/>
+                <Card class="card-operacoes-conta" title="Minhas chaves" :need-icon="false"/>
+                <Card class="card-desabilitado" title="Transferir" :need-icon="false"/>
+            </div>
+        
+            <v-card-actions>
+                <v-btn color="green darken-1" text @click="modalAreaPix_depositar = false">Fechar</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+
 </template>
 
 <style scoped>
@@ -931,7 +981,8 @@ function colorrirCelula(tipo: string) {
 
     .deposito-numero-conta,
     .subtitle-transferencia,
-    .subtitle-extrato {
+    .subtitle-extrato,
+    .subtitle-area-pix {
         margin-bottom: 1rem;
     }
 
