@@ -30,15 +30,15 @@ export class PessoaService {
                     numero_celular: pessoa.numero_celular
                 }
             });
-
-        return {
-            statusCode: HttpStatus.CREATED,
-            message: 'Usuário cadastrado com sucesso'
-        };
     }
 
     private convertDataNascimento(pessoa: PessoaDTO) {
+        console.log("Data de nascimento recebida: " + pessoa.dataNascimento);
+
         const dataNascimento = new Date(pessoa.dataNascimento).toISOString();
+        console.log("Data de nascimento convertida: " + dataNascimento);
+
+
         pessoa.dataNascimento = dataNascimento.toString();
     }
 

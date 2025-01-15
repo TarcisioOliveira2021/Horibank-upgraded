@@ -4,6 +4,7 @@ import Decimal from 'decimal.js';
 import { ContaService } from '../conta/conta.service';
 import { TransacaoService } from '../transacao/transacao.service';
 import { TransferenciaDTO } from '../transferencia/transferencia_dto';
+import { Conta } from '@prisma/client';
 
 @Injectable()
 export class TransferenciaService {
@@ -15,7 +16,7 @@ export class TransferenciaService {
     ) { }
 
     async transferir(idContaOrigem: number, idContaDestino: number, valor: number) {
-        this.contaService.verificarSaldoNegativoZero(valor);
+        this.contaService.verificarValorNegativoZero(valor);
 
         let contaOrigem = await this.prismaService.conta.findUnique({
             where: {
@@ -50,23 +51,19 @@ export class TransferenciaService {
             data: new Date(),
             tipo: 'TRANSFERENCIA'
         });
-
-        return {
-            statusCode: HttpStatus.CREATED,
-            message: 'Usuário cadastrado com sucesso'
-        };
     }
 
-    private validarTransferencia(contaOrigem: any, contaDestino: any, valor: number) {
+    private validarTransferencia(contaOrigem: Conta, contaDestino: Conta, valor: number) {
         if (!contaOrigem || !contaDestino) {
-            throw new NotFoundException('Revise os dados das contas fornecidos');
+            throw new Error('Revise os dados das contas fornecidos');
         }
         if (new Decimal(contaOrigem.saldo).toNumber() < valor) {
-            throw new InternalServerErrorException('Saldo da conta insuficiente para fazer a transferência');
+            throw new Error('Saldo da conta insuficiente para fazer a transferência');
         }
     }
 
     public async buscarTransferencias(idConta: number) {
+        const transferenciasDTO: TransferenciaDTO[] = [];
         let transferencias = await this.prismaService.transferencia.findMany({
             where: {
                 idContaOrigem: idConta
@@ -81,13 +78,10 @@ export class TransferenciaService {
         });
 
         if (!transferencias) {
-            throw new NotFoundException('Nenhuma transferência encontrada para a conta informada');
+            throw new Error('Nenhuma transferência encontrada para a conta informada');
         }
 
-
-        const transferenciasDTO: TransferenciaDTO[] = [];
-
-        transferencias.map(transferencia => {
+        return transferencias.forEach(transferencia => {
             transferenciasDTO.push({
                 titularContaDestino: transferencia.contaDestino.pessoa.nome_completo,
                 agenciaContaDestino: transferencia.contaDestino.agencia,
@@ -97,8 +91,5 @@ export class TransferenciaService {
                 data: transferencia.data.getDate().toString() + '/' + (transferencia.data.getMonth() + 1).toString() + '/' + transferencia.data.getFullYear().toString()
             });
         });
-
-
-        return transferenciasDTO;
     }
 }

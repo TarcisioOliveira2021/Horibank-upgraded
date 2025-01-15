@@ -21,7 +21,7 @@ model Pessoa{
 
 model Conta{
   id Int @id @default(autoincrement())
-  pessoa Pessoa @relation(fields: [idPessoa], references: [id])
+  pessoa Pessoa @relation(fields: [idPessoa], references: [id], onDelete: Cascade)
   idPessoa Int 
   numero Int
   agencia Int
@@ -37,9 +37,9 @@ model Conta{
 
 model Transferencia{
   id Int @id @default(autoincrement())
-  contaOrigem Conta @relation("ContaOrigem", fields: [idContaOrigem], references: [id])
+  contaOrigem Conta @relation("ContaOrigem", fields: [idContaOrigem], references: [id], onDelete: Cascade)
   idContaOrigem Int
-  contaDestino Conta @relation("ContaDestino", fields: [idContaDestino], references: [id])
+  contaDestino Conta @relation("ContaDestino", fields: [idContaDestino], references: [id], onDelete: Cascade)
   idContaDestino Int
   valor Float
   data DateTime
@@ -47,7 +47,7 @@ model Transferencia{
 
 model Transacao{
   id Int @id @default(autoincrement())
-  conta Conta @relation("Conta", fields: [idConta], references: [id])
+  conta Conta @relation("Conta", fields: [idConta], references: [id], onDelete: Cascade)
   idConta Int
   valor Float
   data DateTime

@@ -415,7 +415,6 @@ function depositar(valor: number, idConta: number | undefined) {
             window.location.href = '/acessar-conta';
         });
     }
-
 }
 
 function sacar(valor: number, idConta: number | undefined) {
@@ -424,7 +423,7 @@ function sacar(valor: number, idConta: number | undefined) {
 
     if (token) {
         fetch(SACAR_ROUTE + '/' + idConta, {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
@@ -449,7 +448,9 @@ function sacar(valor: number, idConta: number | undefined) {
                         confirmButtonText: 'Ok',
                         confirmButtonColor: '#42d392',
                     }).then(() => {
-                        window.location.reload();
+                        if (selectedConta.value) {
+                            selectedConta.value.saldo = resp.saldoAtual;
+                        }
                     });
                 });
             } else {
@@ -620,7 +621,7 @@ async function transferir(valor: number, idConta: number | undefined, agencia: n
 function transferirValor(token: string | undefined, valor: number, idContaOrigem: number | undefined, idContaDestino: number | undefined) {
     if (token) {
         fetch(TRANSFERIR_ROUTE + '/' + idContaOrigem, {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
@@ -699,7 +700,7 @@ async function obterInformacoesContaDestino(token: string | undefined, agenciaDe
 
         if (response.ok) {
             const resp = await response.json();
-            conta_destino.value = resp;
+            conta_destino.value = resp.data;
         } else {
             const resp = await response.json();
             Swal.fire({

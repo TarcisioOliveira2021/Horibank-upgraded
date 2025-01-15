@@ -11,8 +11,14 @@ export class PessoaController {
     ) { }
 
     @Post('cadastrar')
-    cadastrarPessoa(@Body() pessoaDTO: PessoaDTO) {
-        return this.pessoaService.cadastrarPessoa(pessoaDTO);
+    @HttpCode(HttpStatus.CREATED)
+    async cadastrarPessoa(@Body() pessoaDTO: PessoaDTO) {
+        try{
+            await this.pessoaService.cadastrarPessoa(pessoaDTO);
+            return {message: 'Pessoa cadastrada com sucesso'};
+        }catch(e){
+            
+        }
     }
 
 

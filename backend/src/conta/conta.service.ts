@@ -1,9 +1,11 @@
-import { Injectable, HttpStatus, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { TransacaoService } from '../transacao/transacao.service';
-import { ContaDTO } from './conta_dto';
-import Decimal from 'decimal.js';
+import type { ContaDTO } from './conta_dto';
+import type { ContaDTO_REQUEST } from './conta_dto_REQUEST';
+import type { ContaDTO_RESPONSE } from './conta_dto_response';
 import { Conta } from '@prisma/client';
+import Decimal from 'decimal.js';
 
 //Código para resolver o problema de serialização do JSON para  BigInt
 declare global {
@@ -21,16 +23,11 @@ export class ContaService {
         private readonly transacaoService: TransacaoService
     ) { }
 
-    async cadastrarConta(conta: ContaDTO) {
-        await this.prismaService.conta.create({ data: await this.criarConta(conta) });
-
-        return {
-            statusCode: HttpStatus.CREATED,
-            message: 'Conta cadastrada com sucesso'
-        };
+    async cadastrarConta(conta: ContaDTO_REQUEST) {
+        return await this.prismaService.conta.create({ data: await this.criarConta(conta) });
     }
 
-    private async criarConta(conta: ContaDTO) {
+    private async criarConta(conta: ContaDTO_REQUEST) {
         conta.tipoConta = await this.formatarTipoConta(conta.tipoConta);
         await this.verificarQuantidadeDeContas(+conta.idPessoa);
         await this.verificarTipoConta(conta.tipoConta, conta.idPessoa);
@@ -39,12 +36,12 @@ export class ContaService {
 
         return {
             idPessoa: +conta.idPessoa,
+            saldo: new Decimal(0),
             tipoConta: conta.tipoConta,
             numero: numeroConta,
             digito: digitoConta,
-            agencia,
-            saldo: 0,
-        }
+            agencia: agencia
+        } as ContaDTO;
     }
 
     private async verificarQuantidadeDeContas(idPessoa: number) {
@@ -55,14 +52,13 @@ export class ContaService {
         });
 
         if (quantidadeDeContas >= 2) {
-            throw new InternalServerErrorException("Você já possui o máximo de contas cadastradas");
+            throw new Error("Você já possui duas contas cadastradas");
         }
     }
 
-    private async verificarTipoConta(tipoConta: string, idPessoa: string) {
-        
+    private async verificarTipoConta(tipoConta: string, idPessoa: string) {  
         if (tipoConta != "CORRENTE" && tipoConta != "POUPANCA")
-            throw new InternalServerErrorException("Tipo de conta inválido");
+            throw new Error("Tipo de conta inválido");
 
         let tipoContaExitente = await this.prismaService.conta.findFirst({
             where: {
@@ -71,7 +67,7 @@ export class ContaService {
         });
 
         if (tipoContaExitente) {
-            throw new InternalServerErrorException("Você já possui uma conta desse tipo cadastrada");
+            throw new Error("Você já possui uma conta desse tipo cadastrada");
         }
     }
 
@@ -80,7 +76,7 @@ export class ContaService {
         return tipoContaFormatada === "POUPANÇA" ? tipoContaFormatada.replace("Ç", "C") : tipoContaFormatada;
     }
 
-    private async gerarInformacoesContaRandomicas(conta: ContaDTO) {
+    private async gerarInformacoesContaRandomicas(conta: ContaDTO_REQUEST) {
         let numeroConta = Math.floor(100000 + Math.random() * 900000);
         let digitoConta = Math.floor(0 + Math.random() * 9);
         let agencia = Math.floor(1000 + Math.random() * 9000);
@@ -125,16 +121,14 @@ export class ContaService {
             tipo: "DEPOSITO"
         });
 
-        return {
-            saldoAtual: conta.saldo,
-        };
+        return conta.saldo;
     }
 
     private validarDeposito(valor: number, conta: Conta) {
-        this.verificarSaldoNegativoZero(valor);
+        this.verificarValorNegativoZero(valor);
 
         if (!conta) {
-            throw new NotFoundException("Conta não encontrada");
+            throw new Error("Conta não encontrada");
         }
     }
 
@@ -154,22 +148,19 @@ export class ContaService {
             data: new Date(),
             tipo: "SAQUE"
         });
-        
-        return {
-            statusCode: HttpStatus.OK,
-            message: 'Saque realizado com sucesso'
-        };
+
+        return conta.saldo;
     }
     
     private validarSaque(conta: Conta, valor: number) {
-        this.verificarSaldoNegativoZero(valor);
+        this.verificarValorNegativoZero(valor);
         
         if (!conta) {
-            throw new NotFoundException("Conta não encontrada");
+            throw new Error("Conta não encontrada");
         }
         
         if (new Decimal(conta.saldo).lessThan(valor)) {
-            throw new InternalServerErrorException("Saldo insuficiente para saque");
+            throw new Error("Saldo insuficiente para saque");
         }
     }
 
@@ -192,7 +183,7 @@ export class ContaService {
         });
 
         if (!conta) {
-            throw new NotFoundException("Conta não encontrada");
+            throw new Error("Conta não encontrada");
         }
 
         await this.prismaService.conta.delete({
@@ -200,11 +191,6 @@ export class ContaService {
                 id: +id
             }
         });
-
-        return {
-            statusCode: HttpStatus.OK,
-            message: 'Conta encerrada com sucesso'
-        };
     }
     
     public formatarSaldo(saldo: Decimal): string {
@@ -213,10 +199,6 @@ export class ContaService {
 
     public async buscarContaDestino(contaDestino: string, agenciaDestino: string, idContaOrigem: string) {
         contaDestino = contaDestino.split("-")[0];
-
-        if(contaDestino.length != 6 || agenciaDestino.length != 4){
-            throw new InternalServerErrorException("Conta ou agência com quantidade de dígitos inválida");
-        }
 
         let conta = await this.prismaService.conta.findFirst({
             where: {
@@ -228,13 +210,8 @@ export class ContaService {
             }
         });
 
-        if (!conta) {
-            throw new NotFoundException("Conta não encontrada");
-        }
 
-        if(conta.id == +idContaOrigem){
-            throw new InternalServerErrorException("Você não pode transferir para você mesmo");
-        }
+        this.validarBuscaContaDestino(conta, contaDestino, agenciaDestino, idContaOrigem);
 
         return {
             idContaDestino: conta.id,
@@ -243,12 +220,27 @@ export class ContaService {
             numeroContaDestino: conta.numero,
             digitoContaDestino: conta.digito,
             tipoContaDestino: conta.tipoConta
-        };
+        } as ContaDTO_RESPONSE;
     }
 
-    public verificarSaldoNegativoZero(valor: number) {
+    private validarBuscaContaDestino(conta: Conta, contaDestino: string, agenciaDestino: string, idContaOrigem: string) {
+        if(contaDestino.length != 6 || agenciaDestino.length != 4){
+            throw new Error("Conta ou agência com quantidade de dígitos inválida");
+        }
+
+        if (!conta) {
+            throw new Error("Conta não encontrada");
+        }
+
+        if(conta.id == +idContaOrigem){
+            throw new Error("Não é possível transferir para a mesma conta");
+        }
+    }
+
+    public verificarValorNegativoZero(valor: number) {
         if (valor <= 0) {
             throw new InternalServerErrorException("Valor inválido, insira um valor maior que zero");
         }
     }
+
 }
