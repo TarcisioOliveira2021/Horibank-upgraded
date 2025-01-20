@@ -1,7 +1,7 @@
 import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TransacaoDTO } from './transacao_dto';
-import { TransacaoSTRUCT } from './transacao_struct';
+import { Transacao_REQUEST } from './transacao_dto_REQUEST';
+import { Transacao_RESPONSE } from './transacao_dto_RESPONSE';
 import { Transacao } from '@prisma/client';
 
 
@@ -10,7 +10,7 @@ export class TransacaoService {
 
   constructor(private readonly prismaService: PrismaService) { }
 
-  public async criarTransacao(transacao: TransacaoDTO) {
+  public async criarTransacao(transacao: Transacao_REQUEST) {
     await this.prismaService.transacao.create(
       {
         data:
@@ -26,7 +26,7 @@ export class TransacaoService {
 
 
   public async listarTransacoesPorConta(idConta: number) {
-    const transacoesSTRUCT: TransacaoSTRUCT[] = [];
+    const transacoesSTRUCT: Transacao_RESPONSE[] = [];
     let transacoes = await this.prismaService.transacao.findMany({
       where: {
         idConta: idConta
