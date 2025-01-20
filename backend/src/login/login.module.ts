@@ -7,6 +7,7 @@ import { PessoaService } from 'src/pessoa/pessoa.service';
 import { jwtConstants } from './constants';
 import { PessoaModule } from 'src/pessoa/pessoa.module';
 import { ContaModule } from 'src/conta/conta.module';
+import { ExceptionsModule } from 'src/http-exceptions/exceptions.module';
 
 @Module({
   imports: [PrismaModule, 
@@ -17,6 +18,7 @@ import { ContaModule } from 'src/conta/conta.module';
     }),
     PessoaModule,
     ContaModule,
+    ExceptionsModule
   ],
   controllers: [LoginController],
   providers: [LoginService, PessoaService]

@@ -33,13 +33,28 @@ export class PessoaService {
     }
 
     private convertDataNascimento(pessoa: PessoaDTO) {
-        console.log("Data de nascimento recebida: " + pessoa.dataNascimento);
+        pessoa.dataNascimento = this.validarDataNascimento(pessoa.dataNascimento);
+    }
 
-        const dataNascimento = new Date(pessoa.dataNascimento).toISOString();
-        console.log("Data de nascimento convertida: " + dataNascimento);
+    private validarDataNascimento(dataNascimento: string): string {
+        if(!Date.parse(dataNascimento))
+            throw {
+                status: HttpStatus.BAD_REQUEST,
+                message: 'Falha ao converter a data de nascimento'
+            } 
 
+        let dataFormatada = new Date(dataNascimento);
+        let dia = dataFormatada.getDay();
+        let mes = dataFormatada.getMonth();
+        let ano = dataFormatada.getFullYear();
 
-        pessoa.dataNascimento = dataNascimento.toString();
+        if(dia > 31 || mes > 12 || ano > new Date().getFullYear())
+            throw {
+                status: HttpStatus.BAD_REQUEST,
+                message: 'O dia, mês ou ano da data de nascimento é inválido'
+            }
+        
+        return dataFormatada.toISOString();
     }
 
     async hashearSenha(senha: string): Promise<string> {
@@ -52,7 +67,10 @@ export class PessoaService {
         const usuarioRetornado = await this.getPessoa(usuario);
 
         if (usuarioRetornado != null) {
-            throw new BadRequestException('Usuário já cadastrado');
+            throw {
+                status: HttpStatus.FORBIDDEN,
+                message: 'O nome de usuário já está em uso'
+            }
         }
     }
 
@@ -67,7 +85,10 @@ export class PessoaService {
         });
     
         if (!pessoa)
-            throw new NotFoundException('Pessoa não encontrada');
+            throw{
+                status: HttpStatus.BAD_REQUEST,
+                message: 'Pessoa não encontrada'
+            }
 
         const contas = pessoa.contas.map(conta => ({
             ...conta,
@@ -100,9 +121,11 @@ export class PessoaService {
             }
         });
 
-        if (pessoa != null) {
-            throw new BadRequestException('CPF já cadastrado');
-        }
+        if (pessoa != null) 
+            throw{
+                status: HttpStatus.FORBIDDEN,
+                message: 'O CPF informado já está cadastrado'
+            }
     }
     
 }

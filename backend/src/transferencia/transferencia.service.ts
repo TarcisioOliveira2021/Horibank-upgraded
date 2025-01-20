@@ -55,10 +55,16 @@ export class TransferenciaService {
 
     private validarTransferencia(contaOrigem: Conta, contaDestino: Conta, valor: number) {
         if (!contaOrigem || !contaDestino) {
-            throw new Error('Revise os dados das contas fornecidos');
+            throw{
+                status: HttpStatus.BAD_REQUEST,
+                message: 'Revise os dados das contas fornecidos'
+            }
         }
         if (new Decimal(contaOrigem.saldo).toNumber() < valor) {
-            throw new Error('Saldo da conta insuficiente para fazer a transferência');
+            throw{
+                status: HttpStatus.BAD_REQUEST,
+                message: 'Saldo da conta insuficiente para fazer a transferência'
+            }
         }
     }
 
@@ -77,11 +83,14 @@ export class TransferenciaService {
             }
         });
 
-        if (!transferencias) {
-            throw new Error('Nenhuma transferência encontrada para a conta informada');
+        if (transferencias.length == 0) {
+            throw{
+                status: HttpStatus.BAD_REQUEST,
+                message: 'Nenhuma transferência encontrada para a conta informada'
+            }
         }
 
-        return transferencias.forEach(transferencia => {
+        transferencias.forEach(transferencia => {
             transferenciasDTO.push({
                 titularContaDestino: transferencia.contaDestino.pessoa.nome_completo,
                 agenciaContaDestino: transferencia.contaDestino.agencia,
@@ -91,5 +100,7 @@ export class TransferenciaService {
                 data: transferencia.data.getDate().toString() + '/' + (transferencia.data.getMonth() + 1).toString() + '/' + transferencia.data.getFullYear().toString()
             });
         });
+
+        return transferenciasDTO;
     }
 }

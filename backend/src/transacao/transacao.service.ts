@@ -2,6 +2,7 @@ import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TransacaoDTO } from './transacao_dto';
 import { TransacaoSTRUCT } from './transacao_struct';
+import { Transacao } from '@prisma/client';
 
 
 @Injectable()
@@ -21,15 +22,11 @@ export class TransacaoService {
         }
       }
     );
-
-    return {
-      statusCode: HttpStatus.CREATED,
-      message: 'Transação cadastrada com sucesso'
-    };
   }
 
 
   public async listarTransacoesPorConta(idConta: number) {
+    const transacoesSTRUCT: TransacaoSTRUCT[] = [];
     let transacoes = await this.prismaService.transacao.findMany({
       where: {
         idConta: idConta
@@ -43,17 +40,10 @@ export class TransacaoService {
       }
     });
 
-    if (transacoes.length == 0)
-      throw new NotFoundException('Nenhuma transação encontrada para a conta informada');
-
-
-    const transacoesList: TransacaoSTRUCT[] = [];
+    this.validarTransacoesEncontradas(transacoes);
 
     transacoes.forEach(transacao => {
-
-
-
-      transacoesList.push({
+      transacoesSTRUCT.push({
         destinatario: transacao.conta.pessoa.nome_completo,
         valor: 'R$'+transacao.valor.toFixed(2),
         data: transacao.data.getDate().toString() + '/' + (transacao.data.getMonth() + 1).toString() + '/' + transacao.data.getFullYear().toString(),
@@ -61,6 +51,14 @@ export class TransacaoService {
       });
     });
 
-    return transacoesList;
+    return transacoesSTRUCT; 
+  }
+
+  private validarTransacoesEncontradas(transacoes: Transacao[]){
+    if (transacoes.length == 0)
+      throw{
+        status: HttpStatus.BAD_REQUEST,
+        message: 'Nenhuma transação encontrada para a conta informada'
+      }
   }
 }

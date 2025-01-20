@@ -1,10 +1,14 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards, Request, UseFilters, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { UsuarioDTO_REQUEST } from './usuario_dto_REQUEST';
+import { ExceptionsService } from 'src/http-exceptions/exceptions.service';
 
 @Controller('login')
 export class LoginController {
-  constructor(private readonly loginService: LoginService) { }
+  constructor(
+    private readonly loginService: LoginService,
+    private readonly exceptionsService: ExceptionsService
+  ) { }
 
   @Post('logar')
   @HttpCode(HttpStatus.OK)
@@ -12,13 +16,8 @@ export class LoginController {
     try {
       let usuarioEncontrado = await this.loginService.login(usuario);
       return { id: usuarioEncontrado.id, token: usuarioEncontrado.token };
-
     } catch (e) {
-      if (e.message == 'Usuário não encontrado') 
-        throw new NotFoundException('Usuário não encontrado');
-
-      if (e.message == 'Senha ou login inválidos') 
-        throw new ForbiddenException('Senha ou login inválidos');
+      throw await this.exceptionsService.handleHttpException(e);
     }
   }
 }

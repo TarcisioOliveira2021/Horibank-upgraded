@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { TransacaoService } from '../transacao/transacao.service';
 import type { ContaDTO } from './conta_dto';
@@ -52,13 +52,19 @@ export class ContaService {
         });
 
         if (quantidadeDeContas >= 2) {
-            throw new Error("Você já possui duas contas cadastradas");
+            throw{
+                status: HttpStatus.BAD_REQUEST,
+                message: "Você já possui duas contas cadastradas, não é possível cadastrar mais"
+            }
         }
     }
 
     private async verificarTipoConta(tipoConta: string, idPessoa: string) {  
         if (tipoConta != "CORRENTE" && tipoConta != "POUPANCA")
-            throw new Error("Tipo de conta inválido");
+            throw {
+                status: HttpStatus.BAD_GATEWAY,
+                message: "Tipo de conta inválido"
+            }
 
         let tipoContaExitente = await this.prismaService.conta.findFirst({
             where: {
@@ -67,7 +73,10 @@ export class ContaService {
         });
 
         if (tipoContaExitente) {
-            throw new Error("Você já possui uma conta desse tipo cadastrada");
+            throw{
+                status: HttpStatus.FORBIDDEN,
+                message: "Você já possui uma conta desse tipo cadastrada"
+            }
         }
     }
 
@@ -126,10 +135,7 @@ export class ContaService {
 
     private validarDeposito(valor: number, conta: Conta) {
         this.verificarValorNegativoZero(valor);
-
-        if (!conta) {
-            throw new Error("Conta não encontrada");
-        }
+        this.validarConta(conta);
     }
 
     public async sacar(id: string, valor: number) {
@@ -154,13 +160,13 @@ export class ContaService {
     
     private validarSaque(conta: Conta, valor: number) {
         this.verificarValorNegativoZero(valor);
-        
-        if (!conta) {
-            throw new Error("Conta não encontrada");
-        }
+        this.validarConta(conta);   
         
         if (new Decimal(conta.saldo).lessThan(valor)) {
-            throw new Error("Saldo insuficiente para saque");
+            throw {
+                status: HttpStatus.BAD_REQUEST,
+                message: "Saldo insuficiente"
+            }
         }
     }
 
@@ -224,22 +230,38 @@ export class ContaService {
     }
 
     private validarBuscaContaDestino(conta: Conta, contaDestino: string, agenciaDestino: string, idContaOrigem: string) {
-        if(contaDestino.length != 6 || agenciaDestino.length != 4){
-            throw new Error("Conta ou agência com quantidade de dígitos inválida");
-        }
+        this.validarConta(conta);
 
-        if (!conta) {
-            throw new Error("Conta não encontrada");
+        if(contaDestino.length != 6 || agenciaDestino.length != 4){
+            throw{
+                status: HttpStatus.BAD_REQUEST,
+                message: "Número da conta ou agência inválidos"
+            }
         }
 
         if(conta.id == +idContaOrigem){
-            throw new Error("Não é possível transferir para a mesma conta");
+            throw{
+                status: HttpStatus.BAD_REQUEST,
+                message: "Não é possível transferir para a mesma conta"
+            }
         }
     }
 
     public verificarValorNegativoZero(valor: number) {
         if (valor <= 0) {
-            throw new InternalServerErrorException("Valor inválido, insira um valor maior que zero");
+            throw{
+                status: HttpStatus.BAD_REQUEST,
+                message: "Valor inválido"
+            }
+        }
+    }
+
+    private validarConta(conta: Conta) {
+        if (!conta) {
+            throw{
+                status: 404,
+                message: "Conta não encontrada"
+            }
         }
     }
 

@@ -228,7 +228,7 @@ async function obterHistoricoTransferencias(token: string | undefined, idConta: 
 
         if (response.ok) {
             const resp = await response.json();
-            historico_transferencia.value = resp;
+            historico_transferencia.value = resp.data;
         } else {
             const resp = await response.json();
 
@@ -302,7 +302,7 @@ async function obterExtrato(token: string | undefined, idConta: number | undefin
 
         if (response.ok) {
             const resp = await response.json();
-            extrato.value = resp;
+            extrato.value = resp.data;
         } else {
             const resp = await response.json();
 

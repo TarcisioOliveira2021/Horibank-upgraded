@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,7 +11,15 @@ async function bootstrap() {
     optionsSuccessStatus: 200,
   });
 
-  app.useGlobalFilters(new PrismaClientExceptionFilter());
+  //Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Horibank API Docs')
+    .setDescription('Documentação da API do servidor da horibank')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
