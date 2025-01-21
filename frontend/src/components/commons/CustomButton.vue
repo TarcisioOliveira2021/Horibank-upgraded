@@ -1,10 +1,9 @@
 <script setup lang="ts">
-interface Props {
+
+defineProps<{
   botaoTexto: string
   routeBotao?: string
-}
-
-defineProps<Props>()
+}>()
 </script>
 
 <template>
@@ -91,3 +90,4 @@ defineProps<Props>()
 
 }
 </style>
+
