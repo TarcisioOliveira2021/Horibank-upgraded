@@ -1,5 +1,5 @@
 <script lang="ts" src="./scripts/index.ts"></script>
-<style scoped src="./styles/index.css"></style>
+<style scoped src="./styles/Index.css"></style>
 
 <template>
   <div class="inicio" id="inicio">
