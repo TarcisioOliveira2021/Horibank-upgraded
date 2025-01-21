@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Transacao_REQUEST } from './transacao_dto_REQUEST';
 import { Transacao_RESPONSE } from './transacao_dto_RESPONSE';
 import { Transacao } from '@prisma/client';
+import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObjects';
 
 
 @Injectable()
@@ -56,9 +57,6 @@ export class TransacaoService {
 
   private validarTransacoesEncontradas(transacoes: Transacao[]){
     if (transacoes.length == 0)
-      throw{
-        status: HttpStatus.BAD_REQUEST,
-        message: 'Nenhuma transação encontrada para a conta informada'
-      }
+      throw new NotFoundCorrespondentObjects('Nenhuma transação encontrada para a conta informada')
   }
 }

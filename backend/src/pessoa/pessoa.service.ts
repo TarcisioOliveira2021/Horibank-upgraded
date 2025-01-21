@@ -3,6 +3,8 @@ import { PessoaDTO } from './pessoa_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { ContaService } from 'src/conta/conta.service';
+import { ExistCorrespondentObjects } from 'src/http-exceptions/ExistCorrespondentObjects';
+import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObjects';
 
 
 @Injectable()
@@ -66,12 +68,8 @@ export class PessoaService {
         await this.verificarCPF(nuCPF);
         const usuarioRetornado = await this.getPessoa(usuario);
 
-        if (usuarioRetornado != null) {
-            throw {
-                status: HttpStatus.FORBIDDEN,
-                message: 'O nome de usuário já está em uso'
-            }
-        }
+        if (usuarioRetornado != null)
+            throw new ExistCorrespondentObjects('O nome de usuário já está em uso');
     }
 
     async getPessoaId(pessoaId: string) {
@@ -85,10 +83,7 @@ export class PessoaService {
         });
     
         if (!pessoa)
-            throw{
-                status: HttpStatus.BAD_REQUEST,
-                message: 'Pessoa não encontrada'
-            }
+            throw new NotFoundCorrespondentObjects('Pessoa não encontrada');
 
         const contas = pessoa.contas.map(conta => ({
             ...conta,
@@ -122,10 +117,7 @@ export class PessoaService {
         });
 
         if (pessoa != null) 
-            throw{
-                status: HttpStatus.FORBIDDEN,
-                message: 'O CPF informado já está cadastrado'
-            }
+            throw new ExistCorrespondentObjects('O CPF informado já está cadastrado');
     }
     
 }

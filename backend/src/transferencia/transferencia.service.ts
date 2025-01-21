@@ -5,6 +5,7 @@ import { ContaService } from '../conta/conta.service';
 import { TransacaoService } from '../transacao/transacao.service';
 import { TransferenciaDTO } from '../transferencia/transferencia_dto';
 import { Conta } from '@prisma/client';
+import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObjects';
 
 @Injectable()
 export class TransferenciaService {
@@ -54,18 +55,12 @@ export class TransferenciaService {
     }
 
     private validarTransferencia(contaOrigem: Conta, contaDestino: Conta, valor: number) {
-        if (!contaOrigem || !contaDestino) {
-            throw{
-                status: HttpStatus.BAD_REQUEST,
-                message: 'Revise os dados das contas fornecidos'
-            }
-        }
-        if (new Decimal(contaOrigem.saldo).toNumber() < valor) {
-            throw{
-                status: HttpStatus.BAD_REQUEST,
-                message: 'Saldo da conta insuficiente para fazer a transferência'
-            }
-        }
+        if (!contaOrigem || !contaDestino) 
+            throw new NotFoundCorrespondentObjects('Conta de origem ou conta de destino não encontrada');
+        
+        if (new Decimal(contaOrigem.saldo).toNumber() < valor)
+            throw new RangeError('Saldo da conta insuficiente para fazer a transferência');
+        
     }
 
     public async buscarTransferencias(idConta: number) {
@@ -83,12 +78,9 @@ export class TransferenciaService {
             }
         });
 
-        if (transferencias.length == 0) {
-            throw{
-                status: HttpStatus.BAD_REQUEST,
-                message: 'Nenhuma transferência encontrada para a conta informada'
-            }
-        }
+        if (transferencias.length == 0) 
+            throw new NotFoundCorrespondentObjects('Nenhuma transferência encontrada para a conta informada');
+        
 
         transferencias.forEach(transferencia => {
             transferenciasDTO.push({
