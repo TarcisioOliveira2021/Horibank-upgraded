@@ -1,4 +1,4 @@
-import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, NotAcceptableException, UnprocessableEntityException } from "@nestjs/common";
+import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, InternalServerErrorException, NotAcceptableException, UnprocessableEntityException } from "@nestjs/common";
 
 @Catch(Error)
 export class HttpExceptionFilter implements ExceptionFilter{
@@ -27,6 +27,9 @@ export class HttpExceptionFilter implements ExceptionFilter{
 
             case 'NotAllowedAction' :
                 return new UnprocessableEntityException(e.message);
+
+            default:
+                return new InternalServerErrorException(e.message);
         }
     }
 }
