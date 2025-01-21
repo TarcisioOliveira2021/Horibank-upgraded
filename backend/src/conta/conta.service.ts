@@ -6,6 +6,8 @@ import type { ContaDTO_REQUEST } from './conta_dto_REQUEST';
 import type { ContaDTO_RESPONSE } from './conta_dto_response';
 import { Conta } from '@prisma/client';
 import Decimal from 'decimal.js';
+import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObject';
+import { NotAllowedAction } from 'src/http-exceptions/NotAllowedAction';
 
 //Código para resolver o problema de serialização do JSON para  BigInt
 declare global {
@@ -51,20 +53,13 @@ export class ContaService {
             }
         });
 
-        if (quantidadeDeContas >= 2) {
-            throw{
-                status: HttpStatus.BAD_REQUEST,
-                message: "Você já possui duas contas cadastradas, não é possível cadastrar mais"
-            }
-        }
+        if (quantidadeDeContas >= 2)
+            throw new NotAllowedAction("Você já possui duas contas cadastradas, não é possível cadastrar mais");
     }
 
     private async verificarTipoConta(tipoConta: string, idPessoa: string) {  
         if (tipoConta != "CORRENTE" && tipoConta != "POUPANCA")
-            throw {
-                status: HttpStatus.BAD_GATEWAY,
-                message: "Tipo de conta inválido"
-            }
+            throw new TypeError("Tipo de conta inválido");
 
         let tipoContaExitente = await this.prismaService.conta.findFirst({
             where: {
@@ -72,12 +67,8 @@ export class ContaService {
                 tipoConta: tipoConta            }
         });
 
-        if (tipoContaExitente) {
-            throw{
-                status: HttpStatus.FORBIDDEN,
-                message: "Você já possui uma conta desse tipo cadastrada"
-            }
-        }
+        if (tipoContaExitente)
+            throw new NotAllowedAction("Você já possui uma conta desse tipo cadastrada");
     }
 
     private async formatarTipoConta(tipoConta: string): Promise<string> {
@@ -162,12 +153,8 @@ export class ContaService {
         this.verificarValorNegativoZero(valor);
         this.validarConta(conta);   
         
-        if (new Decimal(conta.saldo).lessThan(valor)) {
-            throw {
-                status: HttpStatus.BAD_REQUEST,
-                message: "Saldo insuficiente"
-            }
-        }
+        if (new Decimal(conta.saldo).lessThan(valor))
+            throw new RangeError("Saldo insuficiente");
     }
 
     public async atualizarSaldoConta(id: number, saldo: Decimal) {
@@ -188,9 +175,9 @@ export class ContaService {
             }
         });
 
-        if (!conta) {
-            throw new Error("Conta não encontrada");
-        }
+        if (!conta)
+            throw new NotFoundCorrespondentObjects("Conta não encontrada");
+        
 
         await this.prismaService.conta.delete({
             where: {
@@ -232,37 +219,23 @@ export class ContaService {
     private validarBuscaContaDestino(conta: Conta, contaDestino: string, agenciaDestino: string, idContaOrigem: string) {
         this.validarConta(conta);
 
-        if(contaDestino.length != 6 || agenciaDestino.length != 4){
-            throw{
-                status: HttpStatus.BAD_REQUEST,
-                message: "Número da conta ou agência inválidos"
-            }
-        }
+        if(contaDestino.length != 6 || agenciaDestino.length != 4)
+            throw new NotAllowedAction("Número da conta ou agência inválidos");
+        
 
-        if(conta.id == +idContaOrigem){
-            throw{
-                status: HttpStatus.BAD_REQUEST,
-                message: "Não é possível transferir para a mesma conta"
-            }
-        }
+        if(conta.id == +idContaOrigem)
+            throw new NotAllowedAction("Não é possível transferir para a mesma conta");
+        
     }
 
     public verificarValorNegativoZero(valor: number) {
-        if (valor <= 0) {
-            throw{
-                status: HttpStatus.BAD_REQUEST,
-                message: "Valor inválido"
-            }
-        }
+        if (valor <= 0)
+            throw new RangeError("Valor inválido");
     }
 
     private validarConta(conta: Conta) {
-        if (!conta) {
-            throw{
-                status: 404,
-                message: "Conta não encontrada"
-            }
-        }
+        if (!conta)
+            throw new NotFoundCorrespondentObjects("Conta não encontrada");
     }
 
 }

@@ -6,6 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 import { PessoaService } from 'src/pessoa/pessoa.service';
 import * as bcrypt from 'bcrypt';
 import { Pessoa } from '@prisma/client';
+import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObject';
+import { NotAllowedAction } from 'src/http-exceptions/NotAllowedAction';
 
 @Injectable()
 export class LoginService {
@@ -27,12 +29,12 @@ export class LoginService {
     }
  
     private async validarUsuarioSenha(usuario: UsuarioDTO_REQUEST, usuarioEncontrado: Pessoa) {
-        if(usuario == null)
-            throw new Error('Usuário não encontrado');
+        if(usuarioEncontrado == null)
+            throw new NotFoundCorrespondentObjects('Usuário não encontrado');
     
         if(await bcrypt.compare(usuario.password, usuarioEncontrado.senha))
             return  usuarioEncontrado;
         
-        throw new Error('Senha ou login inválidos');
+        throw new NotAllowedAction('Senha ou login inválidos');
     }
 }

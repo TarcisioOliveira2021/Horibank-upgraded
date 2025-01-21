@@ -3,8 +3,9 @@ import { PessoaDTO } from './pessoa_dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { ContaService } from 'src/conta/conta.service';
-import { ExistCorrespondentObjects } from 'src/http-exceptions/ExistCorrespondentObjects';
-import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObjects';
+import { ExistCorrespondentObjects } from 'src/http-exceptions/ExistCorrespondentObject';
+import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObject';
+import { NotAllowedAction } from 'src/http-exceptions/NotAllowedAction';
 
 
 @Injectable()
@@ -40,10 +41,7 @@ export class PessoaService {
 
     private validarDataNascimento(dataNascimento: string): string {
         if(!Date.parse(dataNascimento))
-            throw {
-                status: HttpStatus.BAD_REQUEST,
-                message: 'Falha ao converter a data de nascimento'
-            } 
+            throw new NotAllowedAction('Falha ao converter data de nascimento');
 
         let dataFormatada = new Date(dataNascimento);
         let dia = dataFormatada.getDay();
@@ -51,10 +49,7 @@ export class PessoaService {
         let ano = dataFormatada.getFullYear();
 
         if(dia > 31 || mes > 12 || ano > new Date().getFullYear())
-            throw {
-                status: HttpStatus.BAD_REQUEST,
-                message: 'O dia, mês ou ano da data de nascimento é inválido'
-            }
+            throw new NotAllowedAction('Data de nascimento inválida');
         
         return dataFormatada.toISOString();
     }

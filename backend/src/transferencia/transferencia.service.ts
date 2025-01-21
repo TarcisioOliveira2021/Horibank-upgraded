@@ -5,7 +5,7 @@ import { ContaService } from '../conta/conta.service';
 import { TransacaoService } from '../transacao/transacao.service';
 import { TransferenciaDTO } from '../transferencia/transferencia_dto';
 import { Conta } from '@prisma/client';
-import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObjects';
+import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObject';
 
 @Injectable()
 export class TransferenciaService {

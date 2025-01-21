@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Transacao_REQUEST } from './transacao_dto_REQUEST';
 import { Transacao_RESPONSE } from './transacao_dto_RESPONSE';
 import { Transacao } from '@prisma/client';
-import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObjects';
+import { NotFoundCorrespondentObjects } from 'src/http-exceptions/NotFoundCorrespondentObject';
 
 
 @Injectable()
