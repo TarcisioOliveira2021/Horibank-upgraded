@@ -47,19 +47,19 @@ const props = defineProps<{
 }>();
 
 const headersTable = [
-    { title: 'Titular', align: 'start', key: 'titularContaDestino' },
-    { title: 'Agencia', align: 'start', key: 'agenciaContaDestino' },
-    { title: 'Conta', align: 'start', key: 'numero_digitoContaDestino' },
-    { title: 'Tipo Conta', align: 'start', key: 'tipoContaDestino' },
-    { title: 'Valor', align: 'start', key: 'valor' },
-    { title: 'Data', align: 'start', key: 'data' },
+    { title: 'Titular', align: 'start' as const, key: 'titularContaDestino' },
+    { title: 'Agencia', align: 'start' as const, key: 'agenciaContaDestino' },
+    { title: 'Conta', align: 'start' as const, key: 'numero_digitoContaDestino' },
+    { title: 'Tipo Conta', align: 'start' as const, key: 'tipoContaDestino' },
+    { title: 'Valor', align: 'start' as const, key: 'valor' },
+    { title: 'Data', align: 'start' as const, key: 'data' },
 ];
 
 const headerExtrato = [
-    { title: 'Destinatario', align: 'start', key: 'destinatario' },
-    { title: 'Data', align: 'start', key: 'data' },
-    { title: 'Valor', align: 'start', key: 'valor' },
-    { title: 'Tipo', align: 'start', key: 'tipo' }
+    { title: 'Destinatario', align: 'start' as const, key: 'destinatario' },
+    { title: 'Data', align: 'start' as const, key: 'data' },
+    { title: 'Valor', align: 'start' as const, key: 'valor' },
+    { title: 'Tipo', align: 'start' as const, key: 'tipo' }
 ]
 
 function criarConta() {
@@ -798,9 +798,9 @@ function colorrirCelula(tipo: string) {
             </div>
 
             <v-card-actions>
-                <v-btn color="green darken-1" text @click="exibirModalEncerrarConta(selectedConta)">Encerrar
+                <v-btn color="green darken-1" variant="text" @click="exibirModalEncerrarConta(selectedConta)">Encerrar
                     conta</v-btn>
-                <v-btn color="green darken-1" text @click="modalConta = false">Voltar</v-btn>
+                <v-btn color="green darken-1" variant="text" @click="modalConta = false">Voltar</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -817,8 +817,8 @@ function colorrirCelula(tipo: string) {
                 <CurrencyInput v-model="valorDeposito" :options="{ currency: 'BRL' }" />
             </v-card-text>
             <v-card-actions>
-                <v-btn color="green darken-1" text @click="modalDepositar = false; valorDeposito = 0">Fechar</v-btn>
-                <v-btn color="green darken-1" text
+                <v-btn color="green darken-1" variant="text" @click="modalDepositar = false; valorDeposito = 0">Fechar</v-btn>
+                <v-btn color="green darken-1" variant="text"
                     @click="depositar(valorDeposito, selectedConta?.id)">Confirmar</v-btn>
             </v-card-actions>
         </v-card>
@@ -833,8 +833,8 @@ function colorrirCelula(tipo: string) {
                 <CurrencyInput v-model="valorSaque" :options="{ currency: 'BRL' }" />
             </v-card-text>
             <v-card-actions>
-                <v-btn color="green darken-1" text @click="modalSacar = false; valorSaque = 0">Fechar</v-btn>
-                <v-btn color="green darken-1" text @click="sacar(valorSaque, selectedConta?.id)">Confirmar</v-btn>
+                <v-btn color="green darken-1" variant="text" @click="modalSacar = false; valorSaque = 0">Fechar</v-btn>
+                <v-btn color="green darken-1" variant="text" @click="sacar(valorSaque, selectedConta?.id)">Confirmar</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -855,8 +855,8 @@ function colorrirCelula(tipo: string) {
                     placeholder="Digite o valor a transferir" />
             </v-card-text>
             <v-card-actions>
-                <v-btn color="green darken-1" text @click="modalTransferir = false; valorSaque = 0">Fechar</v-btn>
-                <v-btn color="green darken-1" text
+                <v-btn color="green darken-1" variant="text" @click="modalTransferir = false; valorSaque = 0">Fechar</v-btn>
+                <v-btn color="green darken-1" variant="text"
                     @click="transferir(valorTransferencia, selectedConta?.id, agencia, conta_digito)">Confirmar</v-btn>
             </v-card-actions>
         </v-card>
@@ -877,7 +877,7 @@ function colorrirCelula(tipo: string) {
             </v-card-text>
 
             <v-card-actions>
-                <v-btn color="green darken-1" text @click="modalHistoricoTransferencias = false">Fechar</v-btn>
+                <v-btn color="green darken-1" variant="text" @click="modalHistoricoTransferencias = false">Fechar</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -904,7 +904,7 @@ function colorrirCelula(tipo: string) {
             </v-card-text>
 
             <v-card-actions>
-                <v-btn color="green darken-1" text @click="modalExtrato = false">Fechar</v-btn>
+                <v-btn color="green darken-1" variant="text" @click="modalExtrato = false">Fechar</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -923,7 +923,7 @@ function colorrirCelula(tipo: string) {
             </div>
         
             <v-card-actions>
-                <v-btn color="green darken-1" text @click="modalAreaPix = false">Fechar</v-btn>
+                <v-btn color="green darken-1" variant="text" @click="modalAreaPix = false">Fechar</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -941,7 +941,7 @@ function colorrirCelula(tipo: string) {
             </div>
         
             <v-card-actions>
-                <v-btn color="green darken-1" text @click="modalAreaPix_depositar = false">Fechar</v-btn>
+                <v-btn color="green darken-1" variant="text" @click="modalAreaPix_depositar = false">Fechar</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
