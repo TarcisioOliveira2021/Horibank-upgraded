@@ -3,7 +3,6 @@
   "include": ["env.d.ts", "src/**/*.vue", "src/**/**/*.vue","src/components/interface/*", "src/**/*.d.ts", "src/**/**/*.ts"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
-    "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 
     "paths": {

@@ -1,0 +1,170 @@
+@media (min-width: 1281px) and (max-width: 1920px) {
+    form {
+        display: grid;
+        justify-items: center;
+        grid-template-columns: repeat(2, 1fr);
+        margin: 1rem 1rem 7rem 1rem;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 20px;
+        top: 42px;
+    }
+
+    .usuario-field,
+    .usuario-elements,
+    .cpf-field,
+    .cpf-elements,
+    .nome-completo-field,
+    .nome-completo-elements,
+    .born-field,
+    .email-field,
+    .email-elements,
+    .celular-field,
+    .celular-elements,
+    .password-elements,
+    .password-field,
+    .dp__main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .password-elements {
+        position: relative;
+    }
+
+    span {
+        align-self: center;
+        color: red;
+        width: 220px;
+        font-size: 14px;
+    }
+
+    .usuario-elements,
+    .cpf-elements,
+    .born-field,
+    .nome-completo-elements,
+    .email-elements,
+    .celular-elements,
+    .password-elements {
+        align-items: baseline;
+        height: 70px;
+    }
+
+    label {
+        margin-top: 1rem;
+        width: 200px;
+        color: #2c3e50;
+    }
+
+    .input-login {
+        width: 220px;
+        height: 30px;
+        padding: 0px;
+        margin: 0rem 1rem 0rem 1rem !important;
+        border-radius: 10px !important;
+        border: none !important;
+        transition: 0.5s;
+        text-align: center;
+        cursor: pointer;
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative !important;
+    }
+
+    .input-date {
+        width: 220px;
+        height: 30px;
+        padding: 0px;
+        border-radius: 10px;
+        border: none;
+        transition: 0.5s;
+        align-content: center;
+        text-align: center;
+        cursor: pointer;
+        background-color: white;
+    }
+
+    .start-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 2rem 1rem 4rem 1rem;
+        grid-column: span 2;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .input-login:focus,
+    .input-date:focus {
+        outline: none;
+        box-shadow: inset 0 1px 1px #42d392, 0 0 8px #42d392;
+    }
+
+    .input-login:hover,
+    .input-date:hover {
+        outline: none;
+        border-color: #42d392;
+        box-shadow: inset 0 0 4px #42d392, 0 0 5px #42d392;
+    }
+
+
+    /* dark mode */
+    .label-dark {
+        margin-top: 1rem;
+        width: 200px;
+        color: white;
+    }
+}
+
+@media (min-width: 100px) and (max-width: 1280px) {
+    form {
+        height: 500px;
+        width: 100%;
+        display: flex;
+        margin-bottom: 30px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .start-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .usuario-elements,
+    .cpf-elements,
+    .born-field,
+    .nome-completo-elements,
+    .email-elements,
+    .celular-elements,
+    .password-elements {
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;   
+    }
+
+    .password-elements {
+        position: relative;
+    }
+    
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 22px;
+    }
+
+
+    label {
+        color: #2c3e50;
+    }
+}
