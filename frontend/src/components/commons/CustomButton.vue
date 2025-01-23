@@ -89,5 +89,18 @@ defineProps<{
   }
 
 }
+
+@media (max-width: 376px){
+  .btn{
+    width: 150px;
+    height: 40px;
+    margin-top: 15px;;
+  } 
+
+  .btn:hover{
+    transform: scale(1.1);
+    transition: 0.2s;
+  }
+}
 </style>
 

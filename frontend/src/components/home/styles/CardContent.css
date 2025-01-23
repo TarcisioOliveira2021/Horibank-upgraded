@@ -75,7 +75,7 @@
 
 @media (min-width: 100px) and (max-width: 654px) {
     .card {
-        width: 400px;
+        width: 350px;
         color: white;
         margin: 12px;
         padding: 20px;
