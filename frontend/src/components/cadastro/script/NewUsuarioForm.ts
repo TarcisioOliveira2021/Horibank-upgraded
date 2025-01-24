@@ -165,6 +165,8 @@ export default defineComponent({
 
                     if (screenWidth <= 375) {
                         mostrarSweetAlert('Falha no processamento da solicitação', `${error.message} 😭😭`, 'error', 'Ok', undefined,'300px');
+                    }else{
+                        mostrarSweetAlert('Falha no processamento da solicitação', `${error.message} 😭😭`, 'error', 'Ok');
                     }
                 });
             }
