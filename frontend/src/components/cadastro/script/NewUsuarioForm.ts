@@ -1,6 +1,6 @@
 import Button from '../../commons/CustomButton.vue';
 import * as yup from 'yup';
-import Swal from 'sweetalert2';
+import Swal, { type SweetAlertIcon, type SweetAlertOptions, type SweetAlertPosition } from 'sweetalert2';
 import { Form, Field, ErrorMessage } from '../../login/scripts/vee-validate-componentes';
 import { ref, watch, onMounted, defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
@@ -27,7 +27,34 @@ const formatacaoDataNascimento = (dataNascimento: Date) => {
     return `${dia}/${mes}/${ano}`;
 }
 
-
+function mostrarSweetAlert(title:string, text:string, icon:SweetAlertIcon, confirmButtonText:string, cancelButtonText?:string, width?:string){
+    if(!cancelButtonText){
+        Swal.fire({
+            title: `${title}`,
+            text: `${text}`,
+            icon: `${icon}`,
+            iconColor: '#42d392',
+            showConfirmButton: true,
+            confirmButtonText: `${confirmButtonText}`,
+            confirmButtonColor: '#42d392',
+            width: `${width}`,
+            position: 'center',
+        });    
+    }else{
+        Swal.fire({
+            title: `${title}`,
+            text: `${text}`,
+            icon: `${icon}`,
+            iconColor: '#42d392',
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: `${confirmButtonText}`,
+            confirmButtonColor: '#42d392',
+            cancelButtonText: `${cancelButtonText}`,
+            cancelButtonColor: '#42d392',
+        });
+    }
+}
 
 function validarDataNascimento(dataNascimento: string) {
     const dataAtual = new Date();
@@ -35,15 +62,7 @@ function validarDataNascimento(dataNascimento: string) {
     const diferencaAnos = dataAtual.getFullYear() - dataNascimentoInformadaFormatada.getFullYear();
 
     if (diferencaAnos < 18) {
-        Swal.fire({
-            title: 'Data de nascimento inválida',
-            text: 'Você deve ter mais de 18 anos para se cadastrar 😭😭',
-            icon: 'error',
-            iconColor: '#42d392',
-            confirmButtonText: 'Ok',
-            confirmButtonColor: '#42d392',
-        });
-
+        mostrarSweetAlert('Data de nascimento inválida', 'Você deve ter mais de 18 anos para se cadastrar 😭😭', 'error', 'Ok');
         return false;
     }
 
@@ -65,15 +84,7 @@ function validarCPF(nuCPF: string) {
 
 function validarSenha(senha: string, usuario: string) {
     if (senha.match(usuario)) {
-        Swal.fire({
-            title: 'Senha inválida',
-            text: 'A senha não pode ser igual ao nome de usuário 😭😭',
-            icon: 'error',
-            iconColor: '#42d392',
-            confirmButtonText: 'Ok',
-            confirmButtonColor: '#42d392',
-        });
-
+        mostrarSweetAlert('Senha inválida', 'A senha não pode ser igual ao nome de usuário 😭😭', 'error', 'Ok');
         return false;
     }
 
@@ -147,36 +158,18 @@ export default defineComponent({
                         });
                     } else {
                         response.json().then(resp => {
-                            Swal.fire({
-                                title: 'Falha no processamento',
-                                text: `${resp.message} 😭😭`,
-                                icon: 'error',
-                                iconColor: '#42d392',
-                                confirmButtonText: 'Ok',
-                                confirmButtonColor: '#42d392',
-                            })
+                            mostrarSweetAlert('Falha no processamento', `${resp.message} 😭😭`, 'error', 'Ok');
                         });
                     }
                 }).catch((error) => {
                     const screenWidth = window.innerWidth;
 
                     if (screenWidth <= 375) {
-                        Swal.fire({
-                            title: 'Falha no processamento da solicitação',
-                            text: error.message,
-                            icon: 'error',
-                            iconColor: '#42d392',
-                            confirmButtonText: 'Ok',
-                            confirmButtonColor: '#42d392',
-                            width: '300px',
-                            position: 'center',
-                        });
+                        mostrarSweetAlert('Falha no processamento da solicitação', `${error.message} 😭😭`, 'error', 'Ok', undefined,'300px');
                     }
                 });
             }
         }
-
-
         return {
             nuCPF,
             dataNascimento,
