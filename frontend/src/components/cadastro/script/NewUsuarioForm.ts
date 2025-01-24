@@ -2,7 +2,6 @@ import Button from '../../commons/CustomButton.vue';
 import * as yup from 'yup';
 import Swal from 'sweetalert2';
 import { Form, Field, ErrorMessage } from '../../login/scripts/vee-validate-componentes';
-import { vMaska } from './maska-component';
 import { ref, watch, onMounted, defineComponent} from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -62,13 +61,22 @@ function onSubmitForm(inputValues: any) {
         }).then(response => {
             if (response.ok) {
                 response.json().then(resp => {
-                    Swal.fire({
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                          toast.onmouseenter = Swal.stopTimer;
+                          toast.onmouseleave = Swal.resumeTimer;
+                        }
+                      });
+                      Toast.fire({
                         title: `${resp.message}`,
-                        text: 'Você será redirecionado para tela de login ao clickar no botão abaixo 😊',
+                        text: 'Logado com sucesso, redirecionando...',
                         icon: 'success',
                         iconColor: '#42d392',
-                        confirmButtonText: 'Ok',
-                        confirmButtonColor: '#42d392',
                     }).then(() => {
                         router.push('/acessar-conta'); 
                     });
@@ -85,6 +93,21 @@ function onSubmitForm(inputValues: any) {
                     })
                 });
             }
+        }).catch((error) => {
+            const screenWidth = window.innerWidth;
+            
+            if(screenWidth <= 375) {
+                Swal.fire({
+                    title: 'Falha no processamento da solicitação',
+                    text: error.message,
+                    icon: 'error',
+                    iconColor: '#42d392',
+                    confirmButtonText: 'Ok',
+                    confirmButtonColor: '#42d392',
+                    width: '300px',
+                    position: 'center',
+                });
+            } 
         });
     }
 }
@@ -146,9 +169,6 @@ export default defineComponent({
         Form,
         Field,
         ErrorMessage
-    },
-    directives: {
-        vMaska
     },
     setup() {
         return {

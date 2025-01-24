@@ -172,4 +172,8 @@
     color: white;
     font-size: 14px;
   }
+
+  .swal2-container{
+    width: 358px !important;
+  }
 }
