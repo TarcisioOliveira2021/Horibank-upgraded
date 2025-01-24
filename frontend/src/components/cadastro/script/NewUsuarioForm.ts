@@ -136,7 +136,7 @@ export default defineComponent({
                 }).then(response => {
                     if (response.ok) {
                         response.json().then(resp => {
-                            const Toast = Swal.mixin({
+                            Swal.mixin({
                                 toast: true,
                                 position: "top-end",
                                 showConfirmButton: false,
@@ -146,8 +146,7 @@ export default defineComponent({
                                     toast.onmouseenter = Swal.stopTimer;
                                     toast.onmouseleave = Swal.resumeTimer;
                                 }
-                            });
-                            Toast.fire({
+                            }).fire({
                                 title: `${resp.message}`,
                                 text: 'Logado com sucesso, redirecionando...',
                                 icon: 'success',
