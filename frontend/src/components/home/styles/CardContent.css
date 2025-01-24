@@ -75,10 +75,9 @@
 
 @media (min-width: 100px) and (max-width: 654px) {
     .card {
-        width: 350px;
+        width: 300px;
         color: white;
-        margin: 12px;
-        padding: 20px;
+        margin: 0rem 3rem 1rem 3rem;
         border-radius: 15px;
         background-color: rgba(212, 212, 212, 0.308);
         transition: 0.5s;
@@ -125,7 +124,6 @@
         background: -webkit-linear-gradient(317deg, rgba(212, 212, 212, 0.308) 2%, #061147);
         color: white;
     }
-
 
     .card-content-title {
         color: white;

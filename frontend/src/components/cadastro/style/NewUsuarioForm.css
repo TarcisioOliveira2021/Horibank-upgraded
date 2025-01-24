@@ -124,7 +124,6 @@
 
 @media (min-width: 100px) and (max-width: 1280px) {
     form {
-        height: 500px;
         display: flex;
         flex-direction: column;
         justify-content: center;
