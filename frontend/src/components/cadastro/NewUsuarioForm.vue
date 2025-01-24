@@ -39,7 +39,7 @@
         <div class="celular-field">
             <div class="celular-elements">
                 <label for="numero_celular">Número do celular:</label>
-                <Field class="input-login" v-maska="'(##) # ####-####'" name="numero_celular"
+                <Field class="input-login" v-maska="'(##) 9 ####-####'" name="numero_celular"
                     placeholder="Digite o número do celular" />
             </div>
             <ErrorMessage name="numero_celular"></ErrorMessage>
